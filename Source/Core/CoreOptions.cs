@@ -73,6 +73,8 @@ namespace Microsoft.Boogie
     SubsumptionOption UseSubsumption { get; }
     int VcsCores { get; }
     int RandomizeVcIterations { get; }
+    bool PortfolioVcIterations { get; }
+    int PortfolioVcBatchSize { get; }
     List<string> ProverOptions { get; }
     bool Prune { get; }
     bool RunDiagnosticsOnTimeout { get; }

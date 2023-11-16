@@ -1269,15 +1269,21 @@ namespace VC
         }
       }
 
-      public async Task<(ProverInterface.Outcome outcome, VCResult result, int resourceCount)> ReadOutcome(int iteration, Checker checker, VerifierCallback callback)
+      public async Task<(ProverInterface.Outcome outcome, VCResult result, int resourceCount)>
+        ReadOutcome(int iteration, int batch, Checker checker, VerifierCallback callback)
       {
         Contract.EnsuresOnThrow<UnexpectedProverOutputException>(true);
         ProverInterface.Outcome outcome = cce.NonNull(checker).ReadOutcome();
 
         if (options.Trace && SplitIndex >= 0)
         {
-          run.OutputWriter.WriteLine("      --> split #{0} done,  [{1} s] {2}", SplitIndex + 1,
-            checker.ProverRunTime.TotalSeconds, outcome);
+          var iterationText =  options.RandomizeVcIterations > 1 
+            ? batch >= 0 
+              ? $" (batch {batch} iteration {iteration}) " 
+              : $" (iteration {iteration}) " 
+            : " ";
+          run.OutputWriter.WriteLine("      --> split #{0}{3}done,  [{1} s] {2}", SplitIndex + 1,
+            checker.ProverRunTime.TotalSeconds, outcome, iterationText);
         }
         if (options.Trace && options.TrackVerificationCoverage) {
           run.OutputWriter.WriteLine("Proof dependencies:\n  {0}",
