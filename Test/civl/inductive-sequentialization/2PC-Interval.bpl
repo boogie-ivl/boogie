@@ -20,10 +20,11 @@ axiom n > 0;
 
 var locked_requests: [Pid](Set Request);
 var participant_votes: [Pid][Request]Vote;
-var committed_requests: [Cid](Set Request);
-var locked_durations: [Pid](Set Duration);
-var committed_durations: [Pid](Set Duration);
 var participant_decisions: [Pid][Request]Decision;
+// var committed_requests: [Cid](Set Request);
+// var locked_durations: [Pid](Set Duration);
+var committed_durations: Set Duration;
+
 
 function {:inline} Init(participant_votes: [Pid][Request]Vote, participant_decisions: [Pid][Request]Decision) : bool
 {
@@ -58,8 +59,8 @@ requires call YieldInit();
    async call main_s(d, req);
    call wait_for_participant_decision(req);
    if (d == COMMIT()) {
-        assert {:layer 1} !(exists cid: Cid :: Set_Contains(committed_durations[cid], req->duration));
-        call add_to_committed_durations(cid, req);
+        assert {:layer 1} !(Set_Contains(committed_durations, req->duration));
+        call add_to_committed_durations(req);
    }
 }
 
@@ -71,12 +72,12 @@ creates voting;
 yield procedure {:layer 0} main_f(req: Request);
 refines MAIN_F;
 
-async action {:layer 1,2} ADD_TO_COMMITTED_DURATIONS(cid: Cid, req: Request)
+async action {:layer 1,2} ADD_TO_COMMITTED_DURATIONS(req: Request)
 modifies committed_durations;
 {
-    committed_durations[cid] := Set_Add(committed_durations[cid], req->duration);
+    committed_durations := Set_Add(committed_durations, req->duration);
 }
-yield procedure {:layer 0} add_to_committed_durations(cid: Cid, req: Request);
+yield procedure {:layer 0} add_to_committed_durations(req: Request);
 refines ADD_TO_COMMITTED_DURATIONS;
 
 action {:layer 1,2} RECEIVE_VOTE(pid: Pid, req: Request) returns (v: Vote)
@@ -108,7 +109,7 @@ modifies locked_durations, participant_votes;
         return;
     }
     else {
-        if (!Set_Contains(locked_durations[pid], req->duration)) {
+        if (!Set_Contains(locked_durations[pid], req->duration) && !Set_Contains(committed_durations, req->duration)) {
             locked_durations[pid] := Set_Add(locked_durations[pid], req->duration);
             participant_votes[pid][req] := YES();
         }
@@ -127,12 +128,13 @@ yield procedure {:layer 0} main_s(d: Decision, req: Request);
 refines MAIN_S;
 
 async action {:layer 1,2} deciding(decision: Decision, req: Request, pid: Pid)
-modifies locked_durations;
+modifies locked_durations, participant_decisions;
 {
         if (decision == COMMIT()) {
-
+            participant_decisions[pid][req] := COMMIT();
         }
         else {
+             participant_decisions[pid][req] := ABORT();
             locked_durations[pid] := Set_Remove(locked_durations[pid], req->duration);
         }
 }
