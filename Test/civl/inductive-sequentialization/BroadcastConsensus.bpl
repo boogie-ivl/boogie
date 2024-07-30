@@ -82,22 +82,24 @@ action {:layer 3}
 INV_COLLECT_ELIM({:linear_in} ps: Set perm)
 creates COLLECT;
 modifies CH, decision;
+asserts ps->val == (lambda p:perm :: pid(p->i));
+asserts CH == MultisetEmpty;
 {
+  var {:linear} ps': Set perm;
+  var {:linear} remainingCollects: Set perm;
   var {:pool "INV_COLLECT"} k: int;
-
-  assert ps->val == (lambda p:perm :: pid(p->i));
-  assert CH == MultisetEmpty;
 
   CH := (lambda v:val :: value_card(v, value, 1, n));
   assume card(CH) == n;
   assume MultisetSubsetEq(MultisetEmpty, CH);
-
   assume
     {:add_to_pool "INV_COLLECT", k, k+1}
     {:add_to_pool "Collect", COLLECT(One(Collect(n)), n)}
     0 <= k && k <= n;
   decision := (lambda i:pid :: if 1 <= i && i <= k then max(CH) else decision[i]);
-  call create_asyncs(RemainingCollects(k));
+  ps' := ps;
+  call remainingCollects := Set_Get(ps', (lambda p: perm :: p is Collect && k < p->i && p->i <= n));
+  call {:linear remainingCollects} create_asyncs(RemainingCollects(k));
   call set_choice(COLLECT(One(Collect(k+1)), k+1));
 }
 
@@ -108,40 +110,51 @@ MAIN'({:linear_in} ps: Set perm)
 refines MAIN'' using INV_COLLECT_ELIM;
 creates COLLECT;
 modifies CH;
+asserts ps->val == (lambda p:perm :: pid(p->i));
+asserts CH == MultisetEmpty;
 {
-  assert ps->val == (lambda p:perm :: pid(p->i));
-  assert CH == MultisetEmpty;
+  var {:linear} ps': Set perm;
+  var {:linear} allCollects: Set perm;
 
   assume {:add_to_pool "INV_COLLECT", 0} true;
   CH := (lambda v:val :: value_card(v, value, 1, n));
   assume card(CH) == n;
   assume MultisetSubsetEq(MultisetEmpty, CH);
-  call create_asyncs(AllCollects());
+  ps' := ps;
+  call allCollects := Set_Get(ps', (lambda p: perm :: p is Collect && pid(p->i)));
+  call {:linear allCollects} create_asyncs(AllCollects());
 }
 
 atomic action {:layer 2}
 MAIN({:linear_in} ps: Set perm)
 refines MAIN' using INV_BROADCAST_ELIM;
 creates BROADCAST, COLLECT;
+asserts ps->val == (lambda p:perm :: pid(p->i));
+asserts CH == MultisetEmpty;
 {
-  assert ps->val == (lambda p:perm :: pid(p->i));
+  var {:linear} ps': Set perm;
+  var {:linear} allBroadcasts: Set perm;
+  var {:linear} allCollects: Set perm;
 
   assume {:add_to_pool "INV_BROADCAST", 0} true;
-  assert CH == MultisetEmpty;
-
-  call create_asyncs(AllBroadcasts());
-  call create_asyncs(AllCollects());
+  ps' := ps;
+  call allBroadcasts := Set_Get(ps', (lambda p: perm :: p is Broadcast && pid(p->i)));
+  call {:linear allBroadcasts} create_asyncs(AllBroadcasts());
+  call allCollects := Set_Get(ps', (lambda p: perm :: p is Collect && pid(p->i)));
+  call {:linear allCollects} create_asyncs(AllCollects());
 }
 
 action {:layer 2}
 INV_BROADCAST_ELIM({:linear_in} ps: Set perm)
 creates BROADCAST, COLLECT;
 modifies CH;
+asserts ps->val == (lambda p:perm :: pid(p->i));
+asserts CH == MultisetEmpty;
 {
+  var {:linear} ps': Set perm;
+  var {:linear} remainingBroadcasts: Set perm;
+  var {:linear} allCollects: Set perm;
   var {:pool "INV_BROADCAST"} k: int;
-
-  assert ps->val == (lambda p:perm :: pid(p->i));
-  assert CH == MultisetEmpty;
 
   assume
     {:add_to_pool "INV_BROADCAST", k, k+1}
@@ -150,8 +163,11 @@ modifies CH;
   CH := (lambda v:val :: value_card(v, value, 1, k));
   assume card(CH) == k;
   assume MultisetSubsetEq(MultisetEmpty, CH);
-  call create_asyncs(RemainingBroadcasts(k));
-  call create_asyncs(AllCollects());
+  ps' := ps;
+  call remainingBroadcasts := Set_Get(ps', (lambda p: perm :: p is Broadcast && k < p->i && p->i <= n));
+  call {:linear remainingBroadcasts} create_asyncs(RemainingBroadcasts(k));
+  call allCollects := Set_Get(ps', (lambda p: perm :: p is Collect && pid(p->i)));
+  call {:linear allCollects} create_asyncs(AllCollects());
   call set_choice(BROADCAST(One(Broadcast(k+1)), k+1));
 }
 

@@ -12,9 +12,9 @@ async atomic action {:layer 1} B () {}
 left action {:layer 1} C ()
 creates A;
 {
-  call create_async(A());
+  async call A();
   // create undeclared pending async to B
-  call create_async(B());
+  async call B();
 }
 
 left action {:layer 1} D ()

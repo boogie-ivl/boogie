@@ -78,41 +78,15 @@ namespace Microsoft.Boogie.VCExprAST
       this.vcExprGen = vcExprGen;
       this.exprTranslator = exprTranslator;
     }
-    
+
     public static void SubstituteIncarnationInInstantiationSources(Cmd cmd, Substitution incarnationSubst)
     {
-      QKeyValue iter = null;
-      if (cmd is AssignCmd assignCmd)
+      var attrCmd = cmd as ICarriesAttributes;
+      if (attrCmd == null)
       {
-        iter = assignCmd.Attributes;
+        return;
       }
-      else if (cmd is PredicateCmd predicateCmd)
-      {
-        iter = predicateCmd.Attributes;
-      }
-      while (iter != null)
-      {
-        if (iter.Key == "add_to_pool" && iter.Params.Count > 1)
-        {
-          var label = iter.Params[0] as string;
-          if (label != null)
-          {
-            var newParams = new List<object> {label};
-            for (int i = 1; i < iter.Params.Count; i++)
-            {
-              var instance = iter.Params[i] as Expr;
-              if (instance != null)
-              {
-                instance = Substituter.Apply(incarnationSubst, instance);
-                newParams.Add(instance);
-              }
-            }
-            iter.ClearParams();
-            iter.AddParams(newParams);
-          }
-        }
-        iter = iter.Next;
-      }
+      attrCmd.Attributes = CivlAttributes.ApplySubstitutionToPoolHints(incarnationSubst, attrCmd.Attributes);
     }
 
     public VCExpr BindQuantifier(VCExprQuantifier node)

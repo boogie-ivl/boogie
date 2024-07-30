@@ -27,7 +27,7 @@ left action {:layer 2} block ()
 { assume x >= 0; }
 
 pure action F (i: int) returns ({:pool "A"} j: int)
+asserts {:add_to_pool "A", i+1} true;
 {
-  assume {:add_to_pool "A", i+1} true;
   assume j > i;
 }

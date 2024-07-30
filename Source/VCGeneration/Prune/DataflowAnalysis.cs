@@ -42,8 +42,7 @@ abstract class DataflowAnalysis<TNode, TState> {
       var previous = getPrevious(node);
       var previousStates = previous.Select(p => outStates.GetValueOrDefault(p)).Where(x => x != null).ToList();
       var inState = previousStates.Any() ? previousStates.Aggregate(Merge) : Empty;
-      var previousInState = inStates.GetValueOrDefault(node);
-      if (previousInState != null && StateEquals(inState, previousInState)) {
+      if (inStates.ContainsKey(node) && StateEquals(inState, inStates[node])) {
         continue;
       }
 

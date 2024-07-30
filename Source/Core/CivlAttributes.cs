@@ -86,7 +86,7 @@ namespace Microsoft.Boogie
     public const string HIDE = "hide";
     public const string PENDING_ASYNC = "pending_async";
     public const string SYNC = "sync";
-
+    public const string SKIP = "skip";
     public const string IS_RIGHT = "IS_right";
     public const string IS_LEFT = "IS_left";
 
@@ -177,6 +177,40 @@ namespace Microsoft.Boogie
     {
       return callCmd.HasAttribute(MARK);
     }
+
+    public static QKeyValue ApplySubstitutionToPoolHints(Substitution incarnationSubst, QKeyValue attributes)
+    {
+      if (attributes == null)
+      {
+        return null;
+      }
+      attributes = (QKeyValue)new Duplicator().Visit(attributes);
+      var iter = attributes;
+      while (iter != null)
+      {
+        if (iter.Key == "add_to_pool" && iter.Params.Count > 1)
+        {
+          var label = iter.Params[0] as string;
+          if (label != null)
+          {
+            var newParams = new List<object> {label};
+            for (int i = 1; i < iter.Params.Count; i++)
+            {
+              var instance = iter.Params[i] as Expr;
+              if (instance != null)
+              {
+                instance = Substituter.Apply(incarnationSubst, instance);
+                newParams.Add(instance);
+              }
+            }
+            iter.ClearParams();
+            iter.AddParams(newParams);
+          }
+        }
+        iter = iter.Next;
+      }
+      return attributes;
+    }
   }
 
   public static class CivlPrimitives
@@ -223,7 +257,7 @@ namespace Microsoft.Boogie
 
     public static HashSet<string> Async = new()
     {
-      "create_async", "create_asyncs", "create_multi_asyncs", "set_choice"
+      "create_asyncs", "create_multi_asyncs", "set_choice"
     };
   }
 }

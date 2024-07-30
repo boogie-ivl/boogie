@@ -9,8 +9,8 @@ atomic action {:layer 1} MAIN ()
 refines MAIN';
 creates INC, DEC;
 {
-  call create_async(INC());
-  call create_async(DEC());
+  async call INC();
+  async call DEC();
 }
 
 atomic action {:layer 2} MAIN' ()

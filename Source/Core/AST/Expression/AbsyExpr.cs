@@ -1366,10 +1366,23 @@ namespace Microsoft.Boogie
               tc.Error(this,
                 $"global variable must be introduced below the lower layer {actionDecl.LayerRange.LowerLayer} of action {actionDecl.Name}: {Decl.Name}");
             }
-            else if (!actionDecl.LayerRange.Subset(globalVarLayerRange))
+            else
             {
-              tc.Error(this,
-                $"global variable must be available across all layers ({actionDecl.LayerRange}) of action {actionDecl.Name}: {Decl.Name}");
+              if (tc.ExpectedLayerRange == null)
+              {
+                if (!actionDecl.LayerRange.Subset(globalVarLayerRange))
+                {
+                  tc.Error(this,
+                    $"global variable must be available across all layers ({actionDecl.LayerRange}) of action {actionDecl.Name}: {Decl.Name}");
+                }
+              }
+              else
+              {
+                if (!tc.ExpectedLayerRange.Subset(globalVarLayerRange))
+                {
+                  tc.Error(this, $"global variable must be available across all layers in {tc.ExpectedLayerRange}: {Decl.Name}");
+                }
+              }
             }
           }
         }

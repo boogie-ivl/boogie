@@ -8,7 +8,7 @@ using VCGeneration.Prune;
 namespace Microsoft.Boogie
 {
   
-  public class Prune {
+  public class Pruner {
 
     public static Dictionary<object, List<object>>? ComputeDeclarationDependencies(VCGenOptions options, Program program)
     {
@@ -98,7 +98,7 @@ namespace Microsoft.Boogie
         Aggregate(RevealedState.AllHidden, RevealedAnalysis.MergeStates);
     }
 
-    private static Graph<Cmd> GetControlFlowGraph(List<Block> blocks)
+    public static Graph<Absy> GetControlFlowGraph(List<Block> blocks)
     {
       /*
        * Generally the blocks created by splitting have unset block.Predecessors fields
@@ -110,22 +110,17 @@ namespace Microsoft.Boogie
         block.Predecessors.Clear();
       }
       Implementation.ComputePredecessorsForBlocks(blocks);
-      var graph = new Graph<Cmd>();
+      var graph = new Graph<Absy>();
       foreach (var block in blocks) {
+        var commands = block.Cmds.Append<Absy>(block.TransferCmd).ToList();
         foreach (var predecessor in block.Predecessors) {
-          var last = predecessor.Cmds.LastOrDefault();
-          if (last != null) {
-            graph.AddEdge(last, block.Cmds[0]);
-          } else {
-            if (predecessor.Predecessors.Any()) {
-              throw new Exception();
-            }
-          }
+          var previous = predecessor.TransferCmd;
+          graph.AddEdge(previous, commands.First());
         }
 
-        for (var index = 0; index < block.Cmds.Count - 1; index++) {
-          var command = block.Cmds[index];
-          var nextCommand = block.Cmds[index + 1];
+        for (var index = 0; index < commands.Count - 1; index++) {
+          var command = commands[index];
+          var nextCommand = commands[index + 1];
           graph.AddEdge(command, nextCommand);
         }
       }

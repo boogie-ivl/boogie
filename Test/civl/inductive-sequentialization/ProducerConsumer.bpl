@@ -23,10 +23,17 @@ atomic action {:layer 2} MAIN (cid: ChannelId, {:linear_in} handles: Set Channel
 refines MAIN' using INV;
 creates PRODUCER, CONSUMER;
 {
+  var {:linear} handles': Set ChannelHandle;
+  var {:linear} send: One ChannelHandle;
+  var {:linear} receive: One ChannelHandle;
+
   assert handles == BothHandles(cid);
   assert channels[cid]->head == channels[cid]->tail;
-  call create_async(PRODUCER(1, One(Send(cid))));
-  call create_async(CONSUMER(1, One(Receive(cid))));
+  handles' := handles;
+  call send := One_Get(handles', Send(cid));
+  call receive := One_Get(handles', Receive(cid));
+  async call PRODUCER(1, send);
+  async call CONSUMER(1, receive);
 }
 
 atomic action {:layer 3} MAIN' (cid: ChannelId, {:linear_in} handles: Set ChannelHandle)
@@ -45,6 +52,9 @@ INV (cid: ChannelId, {:linear_in} handles: Set ChannelHandle)
 creates PRODUCER, CONSUMER;
 modifies channels;
 {
+  var {:linear} handles': Set ChannelHandle;
+  var {:linear} send: One ChannelHandle;
+  var {:linear} receive: One ChannelHandle;
   var {:pool "INV1"} c: int;
   var {:pool "INV2"} channel: Channel;
   var C: [int]int;
@@ -57,20 +67,23 @@ modifies channels;
   head := channel->head;
   tail := channel->tail;
   assume {:add_to_pool "INV1", c, c+1} 0 < c;
+  handles' := handles;
+  call send := One_Get(handles', Send(cid));
+  call receive := One_Get(handles', Receive(cid));
   if (*) {
     assume head == tail;
-    call create_async(PRODUCER(c, One(Send(cid))));
-    call create_async(CONSUMER(c, One(Receive(cid))));
-    call set_choice(PRODUCER(c, One(Send(cid))));
+    async call PRODUCER(c, send);
+    async call CONSUMER(c, receive);
+    call set_choice(PRODUCER(c, send));
   } else if (*) {
     assume tail == head + 1 && C[head] == 0;
-    call create_async(CONSUMER(c, One(Receive(cid))));
-    call set_choice(CONSUMER(c, One(Receive(cid))));
+    async call CONSUMER(c, receive);
+    call set_choice(CONSUMER(c, receive));
   } else if (*) {
     assume tail == head + 1 && C[head] == c;
-    call create_async(PRODUCER(c+1, One(Send(cid))));
-    call create_async(CONSUMER(c, One(Receive(cid))));
-    call set_choice(CONSUMER(c, One(Receive(cid))));
+    async call PRODUCER(c+1, send);
+    async call CONSUMER(c, receive);
+    call set_choice(CONSUMER(c, receive));
   } else {
     assume head == tail;
   }
@@ -96,7 +109,7 @@ modifies channels;
   {
     C[tail] := x;
     tail := tail + 1;
-    call create_async(PRODUCER(x+1, send_handle));
+    async call PRODUCER(x+1, send_handle);
   }
   else
   {
@@ -129,7 +142,7 @@ requires call YieldConsumer(receive_handle);
   head := head + 1;
   if (x' != 0)
   {
-    call create_async(CONSUMER(x'+1, receive_handle));
+    async call CONSUMER(x'+1, receive_handle);
   }
   channels[receive_handle->val->cid] := Channel(C, head, tail);
   assume {:add_to_pool "INV2", channels[receive_handle->val->cid]} true;

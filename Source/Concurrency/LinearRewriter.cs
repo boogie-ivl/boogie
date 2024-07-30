@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
 
 namespace Microsoft.Boogie;
 
@@ -41,6 +42,11 @@ public class LinearRewriter
         {
           newCmdSeq.AddRange(RewriteCallCmd(callCmd));
         }
+        else if (Monomorphizer.GetOriginalDecl(callCmd.Proc).Name == "create_asyncs")
+        {
+          newCmdSeq.AddRange(PreconditionsForCreateAsyncs(callCmd));
+          newCmdSeq.Add(cmd);
+        }
         else
         {
           newCmdSeq.Add(cmd);
@@ -52,6 +58,91 @@ public class LinearRewriter
       }
     }
     return newCmdSeq;
+  }
+
+  private List<Cmd> PreconditionsForCreateAsyncs(CallCmd callCmd)
+  {
+    var cmds = new List<Cmd>();
+    var attr = QKeyValue.FindAttribute(callCmd.Attributes, x => x.Key == "linear");
+    if (attr == null)
+    {
+      return cmds;
+    }
+
+    var sources = attr.Params.OfType<Expr>();
+    var pendingAsyncType = civlTypeChecker.program.monomorphizer.GetTypeInstantiation(callCmd.Proc)["T"];
+    var actionDecl = civlTypeChecker.linearTypeChecker.GetActionDeclFromCreateAsyncs(callCmd);
+    var iter = Enumerable.Range(0, actionDecl.InParams.Count).Where(i => {
+      var inParam = actionDecl.InParams[i];
+      if (LinearTypeChecker.FindLinearKind(inParam) == LinearKind.ORDINARY)
+      {
+        return false;
+      }
+      if (inParam.TypedIdent.Type is not CtorType ctorType)
+      {
+        return false;
+      }
+      var originalTypeCtorDecl = Monomorphizer.GetOriginalDecl(ctorType.Decl);
+      return originalTypeCtorDecl.Name == "One" || originalTypeCtorDecl.Name == "Set";
+    });
+    var datatypeTypeCtorDecl = (DatatypeTypeCtorDecl) actionDecl.PendingAsyncType.Decl;
+    var constructor = datatypeTypeCtorDecl.Constructors[0];
+
+    var paVar = civlTypeChecker.BoundVariable("pa", actionDecl.PendingAsyncType);
+    var containsExpr = NAryExpr.Select(callCmd.Ins[0], Expr.Ident(paVar));
+    var containsCheckExprs = iter.Zip(sources).Select(kv => {
+      var i = kv.First;
+      var sourceExpr = kv.Second;
+      var inParam = actionDecl.InParams[i];
+      var ctorType = (CtorType)inParam.TypedIdent.Type;
+      var originalTypeCtorDecl = Monomorphizer.GetOriginalDecl(ctorType.Decl);
+      var instanceType = civlTypeChecker.program.monomorphizer.GetTypeInstantiation(ctorType.Decl)[0];
+      var fieldAccess = ExprHelper.FieldAccess(Expr.Ident(paVar), constructor.InParams[i].Name);
+      if (originalTypeCtorDecl.Name == "One")
+      {
+        fieldAccess = ExprHelper.FieldAccess(fieldAccess, "val");
+        return ExprHelper.FunctionCall(SetContains(instanceType), sourceExpr, fieldAccess);
+      }
+      else
+      {
+        return ExprHelper.FunctionCall(SetIsSubset(instanceType), fieldAccess, sourceExpr);
+      }
+    });
+    var containsCheckExpr = ExprHelper.ForallExpr(
+      new List<Variable>(){ paVar },
+      Expr.Imp(containsExpr, Expr.And(containsCheckExprs)));
+    cmds.Add(CmdHelper.AssertCmd(callCmd.tok, containsCheckExpr, "Contains check failed"));
+
+    var paVar1 = civlTypeChecker.BoundVariable("pa1", actionDecl.PendingAsyncType);
+    var paVar2 = civlTypeChecker.BoundVariable("pa2", actionDecl.PendingAsyncType);
+    var guardExprs = new List<Expr>() {
+      NAryExpr.Select(callCmd.Ins[0], Expr.Ident(paVar1)),
+      NAryExpr.Select(callCmd.Ins[0], Expr.Ident(paVar2)),
+      Expr.Neq(Expr.Ident(paVar1), Expr.Ident(paVar2))
+    };
+    var distinctCheckExprs = iter.Select(i => {
+      var inParam = actionDecl.InParams[i];
+      var ctorType = (CtorType)inParam.TypedIdent.Type;
+      var originalTypeCtorDecl = Monomorphizer.GetOriginalDecl(ctorType.Decl);
+      var instanceType = civlTypeChecker.program.monomorphizer.GetTypeInstantiation(ctorType.Decl)[0];
+      var fieldAccess1 = ExprHelper.FieldAccess(Expr.Ident(paVar1), constructor.InParams[i].Name);
+      var fieldAccess2 = ExprHelper.FieldAccess(Expr.Ident(paVar2), constructor.InParams[i].Name);
+      if (originalTypeCtorDecl.Name == "One")
+      {
+        return Expr.Neq(fieldAccess1, fieldAccess2);
+      }
+      else
+      {
+        return ExprHelper.FunctionCall(SetIsDisjoint(instanceType), fieldAccess1, fieldAccess2);
+      }
+    });
+    var distinctCheckExpr = ExprHelper.ForallExpr(
+      new List<Variable>(){ paVar1, paVar2 },
+      Expr.Imp(Expr.And(guardExprs), Expr.And(distinctCheckExprs)));
+    cmds.Add(CmdHelper.AssertCmd(callCmd.tok, distinctCheckExpr, "Distinct check failed"));
+
+    ResolveAndTypecheck(options, cmds);
+    return cmds;
   }
 
   public List<Cmd> RewriteCallCmd(CallCmd callCmd)
@@ -120,6 +211,11 @@ public class LinearRewriter
   private Function SetIsSubset(Type type)
   {
     return monomorphizer.InstantiateFunction("Set_IsSubset", new Dictionary<string, Type>() { { "T", type } });
+  }
+
+  private Function SetIsDisjoint(Type type)
+  {
+    return monomorphizer.InstantiateFunction("Set_IsDisjoint",new Dictionary<string, Type>() { { "T", type } });
   }
 
   private Function SetAdd(Type type)

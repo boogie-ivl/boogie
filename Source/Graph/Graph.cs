@@ -1145,15 +1145,18 @@ namespace Microsoft.Boogie.GraphUtil
       todo.Push(start);
       while (todo.Any())
       {
-        var b = todo.Pop();
-        if (visited.Contains(b))
+        var current = todo.Pop();
+        if (!visited.Add(current))
         {
           continue;
         }
 
-        visited.Add(b);
-        var related = forward ? this.Successors(b) : this.Predecessors(b);
-        related.Where(blk => !visited.Contains(blk)).ToList().ForEach(blk => todo.Push(blk));
+        var targets = forward ? this.Successors(current) : this.Predecessors(current);
+        foreach (var target in targets) {
+          if (!visited.Contains(target)) {
+            todo.Push(target);
+          }
+        }
       }
       return visited;
     }

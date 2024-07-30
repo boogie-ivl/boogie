@@ -9,10 +9,10 @@ async left action {:layer 1} main_f''()
 refines {:IS_right} final using Inv;
 creates main_f'';
 {
-    if(*){
+    if (*) {
     }
-    else{
-      call create_async(main_f''());
+    else {
+      async call main_f''();
     }
 }
 
@@ -24,10 +24,10 @@ left action {:layer 2} final()
 action {:layer 1} Inv()
 creates main_f'';
 {
-    if(*){
+    if (*) {
     }
-    else{
-      call create_async(main_f''());
+    else {
+      async call main_f''();
       call set_choice(main_f''());
     }
 }

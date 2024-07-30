@@ -7,6 +7,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using VC;
 
 namespace Microsoft.Boogie;
@@ -78,7 +79,7 @@ public class VerificationTask : IVerificationTask {
   private IObservable<IVerificationStatus>? StartRunIfNeeded() {
     // No other thread is running or can start, so we can safely access CacheStatus
     if (CacheStatus is Completed) {
-      return null;
+      return Observable.Return(CacheStatus);
     }
 
     // We claim the right to run.
@@ -120,14 +121,15 @@ public class VerificationTask : IVerificationTask {
       yield return new Queued();
     }
     var checker = await checkerTask;
-    try {
+    try
+    {
       yield return new Running();
 
       var collector = new VerificationResultCollector(Split.Options);
-      await Split.BeginCheck(Split.Run.OutputWriter, checker, collector,
-        modelViewInfo, timeout, Split.Run.Implementation.GetResourceLimit(Split.Options), cancellationToken);
+      await engine.LargeThreadTaskFactory.StartNew(() => Split.BeginCheck(Split.Run.OutputWriter, checker, collector,
+        modelViewInfo, timeout, Split.Run.Implementation.GetResourceLimit(Split.Options), cancellationToken), cancellationToken).Unwrap();
 
-      await checker.ProverTask;
+      await checker.ProverTask.WaitAsync(cancellationToken);
       var result = Split.ReadOutcome(0, checker, collector);
 
       CacheStatus = new Completed(result);

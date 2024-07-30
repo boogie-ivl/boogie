@@ -3,7 +3,6 @@ implementation b(x: int)
 {
   var y: int;
 
-
   0:
     goto anon0;
 

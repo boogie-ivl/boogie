@@ -15,7 +15,7 @@ modifies x;
 left action {:layer 1} ASYNC_A ()
 creates A;
 {
-  call create_async(A());
+  async call A();
 }
 
 yield procedure {:layer 1} dummy () {}

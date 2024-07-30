@@ -1,4 +1,4 @@
 yield-pre-post.bpl(7,20): Error: global variable must be accessed inside old expression: g
 yield-pre-post.bpl(8,19): Error: global variable must be accessed inside old expression: g
-yield-pre-post.bpl(16,9): Error: global variable must be available across all layers ([2, 2]) of action B: g
+yield-pre-post.bpl(13,20): Error: global variable must be available across all layers in [2, 2]: g
 3 type checking errors detected in yield-pre-post.bpl

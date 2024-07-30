@@ -1,10 +1,8 @@
-// RUN: %parallel-boogie /vcsDumpSplits "%s" > "%t"
-// RUN: mv %/S/Foo.split*.bpl %/S/Output/
-// RUN: mv %/S/Foo.split*.dot %/S/Output/
+// RUN: %parallel-boogie /printSplit:%t "%s" > "%t"
 // RUN: %diff "%s.expect" "%t"
-// RUN: %diff %S/Foo.split.0.bpl.expect ./Output/Foo.split.0.bpl
-// RUN: %diff %S/Foo.split.1.bpl.expect ./Output/Foo.split.1.bpl
-// RUN: %diff %S/Foo.split.2.bpl.expect ./Output/Foo.split.2.bpl
+// RUN: %diff %S/Foo.split.0.bpl.expect %t-Foo-0.spl
+// RUN: %diff %S/Foo.split.1.bpl.expect %t-Foo-1.spl
+// RUN: %diff %S/Foo.split.2.bpl.expect %t-Foo-2.spl
 
 procedure Foo()
 {

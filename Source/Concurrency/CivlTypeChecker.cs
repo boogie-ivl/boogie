@@ -52,7 +52,8 @@ namespace Microsoft.Boogie
       }
 
       SkipActionDecl = new ActionDecl(Token.NoToken, AddNamePrefix("Skip"), MoverType.Both, new List<Variable>(),
-        new List<Variable>(), true, new List<ActionDeclRef>(), null, null, new List<Requires>(), new List<CallCmd>(),
+        new List<Variable>(), true, new List<ActionDeclRef>(), null, null,
+        new List<Requires>(), new List<CallCmd>(), new List<AssertCmd>(),
         new List<IdentifierExpr>(), null, null);
       var skipImplementation = DeclHelper.Implementation(
         SkipActionDecl,
@@ -132,7 +133,7 @@ namespace Microsoft.Boogie
       {
         foreach (var block in actionDecl.Impl.Blocks)
         {
-          foreach (var callCmd in block.Cmds.OfType<CallCmd>())
+          foreach (var callCmd in block.Cmds.OfType<CallCmd>().Where(callCmd => !callCmd.IsAsync))
           {
             callGraph.AddEdge(actionDecl, callCmd.Proc);
           }
@@ -220,7 +221,7 @@ namespace Microsoft.Boogie
         for (int i = block.Cmds.Count - 1; 0 <= i; i--)
         {
           var cmd = block.Cmds[i];
-          if (modifiedGlobals && cmd is CallCmd callCmd && callCmd.Proc.OriginalDeclWithFormals is { Name: "create_async" })
+          if (modifiedGlobals && cmd is CallCmd callCmd && callCmd.IsAsync)
           {
             var pendingAsyncType = (CtorType)program.monomorphizer.GetTypeInstantiation(callCmd.Proc)["T"];
             if (!refinedActionCreateNames.Contains(pendingAsyncType.Decl.Name))

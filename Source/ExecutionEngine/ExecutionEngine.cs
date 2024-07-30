@@ -24,7 +24,7 @@ namespace Microsoft.Boogie
     /// Boogie traverses the Boogie and VCExpr AST using the call-stack,
     /// so it needs to use a large stack to prevent stack overflows.
     /// </summary>
-    private readonly TaskFactory largeThreadTaskFactory;
+    public TaskFactory LargeThreadTaskFactory { get; }
 
     static int autoRequestIdCount;
 
@@ -60,7 +60,7 @@ namespace Microsoft.Boogie
 
       largeThreadScheduler = scheduler;
       this.disposeScheduler = disposeScheduler;
-      largeThreadTaskFactory = new(CancellationToken.None, TaskCreationOptions.None, TaskContinuationOptions.None, largeThreadScheduler);
+      LargeThreadTaskFactory = new(CancellationToken.None, TaskCreationOptions.None, TaskContinuationOptions.None, largeThreadScheduler);
     }
 
     public static ExecutionEngine CreateWithoutSharedCache(ExecutionEngineOptions options) {
@@ -135,12 +135,11 @@ namespace Microsoft.Boogie
       {
         programId = "main_program_id";
       }
-      
-      if (Options.PrintFile != null && !Options.PrintPassive) {
-        // Printing passive programs happens later
+
+      if (Options.PrintFile != null) {
         PrintBplFile(Options.PrintFile, program, false, true, Options.PrettyPrint);
       }
-
+      
       PipelineOutcome outcome = ResolveAndTypecheck(program, bplFileName, out var civlTypeChecker);
       if (outcome != PipelineOutcome.ResolvedAndTypeChecked) {
         return true;
@@ -240,15 +239,15 @@ namespace Microsoft.Boogie
     {
       Microsoft.Boogie.UnusedVarEliminator.Eliminate(program);
     }
-
-
-    public void PrintBplFile(string filename, Program program, bool allowPrintDesugaring, bool setTokens = true,
-      bool pretty = false)
-    {
+    
+    public void PrintBplFile(string filename, Program program, 
+      bool allowPrintDesugaring, bool setTokens = true,
+      bool pretty = false) {
       PrintBplFile(Options, filename, program, allowPrintDesugaring, setTokens, pretty);
     }
 
-    public static void PrintBplFile(ExecutionEngineOptions options, string filename, Program program, bool allowPrintDesugaring, bool setTokens = true,
+    public static void PrintBplFile(ExecutionEngineOptions options, string filename, Program program, 
+      bool allowPrintDesugaring, bool setTokens = true,
       bool pretty = false)
 
     {
@@ -581,32 +580,40 @@ namespace Microsoft.Boogie
 
     private ProcessedProgram PreProcessProgramVerification(Program program)
     {
-      // Doing lambda expansion before abstract interpretation means that the abstract interpreter
-      // never needs to see any lambda expressions.  (On the other hand, if it were useful for it
-      // to see lambdas, then it would be better to more lambda expansion until after inference.)
-      if (Options.ExpandLambdas) {
-        LambdaHelper.ExpandLambdas(Options, program);
-        if (Options.PrintFile != null && Options.PrintLambdaLifting) {
-          PrintBplFile(Options.PrintFile, program, false, true, Options.PrettyPrint);
+      return LargeThreadTaskFactory.StartNew(() =>
+      {
+        // Doing lambda expansion before abstract interpretation means that the abstract interpreter
+        // never needs to see any lambda expressions.  (On the other hand, if it were useful for it
+        // to see lambdas, then it would be better to more lambda expansion until after inference.)
+        if (Options.ExpandLambdas)
+        {
+          LambdaHelper.ExpandLambdas(Options, program);
+          if (Options.PrintFile != null && Options.PrintLambdaLifting)
+          {
+            PrintBplFile(Options.PrintFile, program, false, true, Options.PrettyPrint);
+          }
         }
-      }
 
-      if (Options.UseAbstractInterpretation) {
-        new AbstractInterpretation.NativeAbstractInterpretation(Options).RunAbstractInterpretation(program);
-      }
+        if (Options.UseAbstractInterpretation)
+        {
+          new AbstractInterpretation.NativeAbstractInterpretation(Options).RunAbstractInterpretation(program);
+        }
 
-      if (Options.LoopUnrollCount != -1) {
-        program.UnrollLoops(Options.LoopUnrollCount, Options.SoundLoopUnrolling);
-      }
+        if (Options.LoopUnrollCount != -1)
+        {
+          program.UnrollLoops(Options.LoopUnrollCount, Options.SoundLoopUnrolling);
+        }
 
-      var processedProgram = Options.ExtractLoops ? ExtractLoops(program) : new ProcessedProgram(program);
+        var processedProgram = Options.ExtractLoops ? ExtractLoops(program) : new ProcessedProgram(program);
 
-      if (Options.PrintInstrumented) {
-        program.Emit(new TokenTextWriter(Options.OutputWriter, Options.PrettyPrint, Options));
-      }
+        if (Options.PrintInstrumented)
+        {
+          program.Emit(new TokenTextWriter(Options.OutputWriter, Options.PrettyPrint, Options));
+        }
 
-      program.DeclarationDependencies = Prune.ComputeDeclarationDependencies(Options, program);
-      return processedProgram;
+        program.DeclarationDependencies = Pruner.ComputeDeclarationDependencies(Options, program);
+        return processedProgram;
+      }).Result;
     }
 
     private ProcessedProgram ExtractLoops(Program program)
@@ -736,7 +743,7 @@ namespace Microsoft.Boogie
           out var gotoCmdOrigins,
           out var modelViewInfo);
 
-        VerificationConditionGenerator.ResetPredecessors(run.Implementation.Blocks);
+        ConditionGeneration.ResetPredecessors(run.Implementation.Blocks);
         var splits = ManualSplitFinder.FocusAndSplit(Options, run, gotoCmdOrigins, vcGenerator).ToList();
         for (var index = 0; index < splits.Count; index++) {
           var split = splits[index];
@@ -909,7 +916,7 @@ namespace Microsoft.Boogie
       string programId, Implementation impl, TextWriter traceWriter)
     {
 
-      var resultTask = largeThreadTaskFactory.StartNew(async () =>
+      var resultTask = LargeThreadTaskFactory.StartNew(async () =>
       {
         var verificationResult = new ImplementationRunResult(impl, programId);
         var vcGen = new VerificationConditionGenerator(processedProgram.Program, CheckerPool);

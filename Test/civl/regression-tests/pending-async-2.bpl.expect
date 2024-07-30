@@ -1,2 +1,2 @@
-pending-async-2.bpl(17,2): Error: primitive call must be instantiated with a pending async type in the creates clause of caller
+pending-async-2.bpl(17,8): Error: pending async must be in the creates clause of caller
 1 type checking errors detected in pending-async-2.bpl

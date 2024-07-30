@@ -44,26 +44,32 @@ INV (cid: ChannelId, {:linear_in} handles: Set ChannelHandle)
 creates PING, PONG;
 modifies channel;
 {
+  var {:linear} handles': Set ChannelHandle;
+  var {:linear} left: One ChannelHandle;
+  var {:linear} right: One ChannelHandle;
   var {:pool "INV"} c: int;
 
   assert handles == BothHandles(cid);
   assert channel[cid] == ChannelPair(EmptyChannel(), EmptyChannel());
 
   assume {:add_to_pool "INV", 0, c, c+1} 0 < c;
+  handles' := handles;
+  call left := One_Get(handles', Left(cid));
+  call right := One_Get(handles', Right(cid));
   if (*) {
     channel[cid] := ChannelPair(EmptyChannel(), EmptyChannel()[c := 1]);
-    call create_async(PONG(c, One(Right(cid))));
-    call create_async(PING(c, One(Left(cid))));
-    call set_choice(PONG(c, One(Right(cid))));
+    async call PONG(c, right);
+    async call PING(c, left);
+    call set_choice(PONG(c, right));
   } else if (*) {
     channel[cid] := ChannelPair(EmptyChannel(), EmptyChannel()[0 := 1]);
-    call create_async(PONG(c, One(Right(cid))));
-    call set_choice(PONG(c, One(Right(cid))));
+    async call PONG(c, right);
+    call set_choice(PONG(c, right));
   } else if (*) {
     channel[cid] := ChannelPair(EmptyChannel()[c := 1], EmptyChannel());
-    call create_async(PONG(c+1, One(Right(cid))));
-    call create_async(PING(c, One(Left(cid))));
-    call set_choice(PING(c, One(Left(cid))));
+    async call PONG(c+1, right);
+    async call PING(c, left);
+    call set_choice(PING(c, left));
   } else {
     channel[cid] := ChannelPair(EmptyChannel(), EmptyChannel());
   }
@@ -77,11 +83,18 @@ refines MAIN' using INV;
 creates PING, PONG;
 modifies channel;
 {
+  var {:linear} handles': Set ChannelHandle;
+  var {:linear} left: One ChannelHandle;
+  var {:linear} right: One ChannelHandle;
+
   assert handles == BothHandles(cid);
   assert channel[cid] == ChannelPair(EmptyChannel(), EmptyChannel());
   channel[cid] := ChannelPair(EmptyChannel(), EmptyChannel()[1 := 1]);
-  call create_async(PING(1, One(Left(cid))));
-  call create_async(PONG(1, One(Right(cid))));
+  handles' := handles;
+  call left := One_Get(handles', Left(cid));
+  call right := One_Get(handles', Right(cid));
+  async call PING(1, left);
+  async call PONG(1, right);
 }
 
 async atomic action {:layer 2} PING (x: int, {:linear_in} p: One ChannelHandle)
@@ -106,7 +119,7 @@ requires call YieldPing(x, p);
   if (*)
   {
     right_channel[x+1] := right_channel[x+1] + 1;
-    call create_async(PING(x+1, p));
+    async call PING(x+1, p);
   }
   else
   {
@@ -136,7 +149,7 @@ requires call YieldPong(y, p);
     assume right_channel[y] > 0;
     right_channel[y] := right_channel[y] - 1;
     left_channel[y] := left_channel[y] + 1;
-    call create_async(PONG(y+1, p));
+    async call PONG(y+1, p);
   }
   else
   {

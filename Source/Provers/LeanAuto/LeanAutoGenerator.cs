@@ -50,7 +50,7 @@ public class LeanAutoGenerator : ReadOnlyVisitor
       var liveDeclarations =
         !options.Prune
           ? p.TopLevelDeclarations
-          : Prune.GetLiveDeclarations(options, p, allBlocks.ToList()).ToList();
+          : Pruner.GetLiveDeclarations(options, p, allBlocks.ToList()).ToList();
 
       generator.WriteLine("-- Type constructors");
       // Always include all type constructors

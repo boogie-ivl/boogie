@@ -1,4 +1,4 @@
-// RUN: %parallel-boogie /prune:1 /printPruned:"%tpruned" /errorTrace:0 "%s" > "%t"
+// RUN: %parallel-boogie /prune:1 /printSplit:"%t" /printSplitDeclarations /errorTrace:0 "%s" > "%t"
 // RUN: %diff "%s.expect" "%t"
 // UNSUPPORTED: batch_mode
 

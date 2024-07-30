@@ -4,7 +4,7 @@
 atomic action {:layer 1,2} SPEC ()
 creates A;
 {
-  call create_async(A(1));
+  async call A(1);
 }
 
 yield procedure {:layer 1} b ()

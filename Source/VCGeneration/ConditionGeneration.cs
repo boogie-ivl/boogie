@@ -223,10 +223,9 @@ namespace VC
       Block origStartBlock = impl.Blocks[0];
       Block insertionPoint = new Block(
         new Token(-17, -4), blockLabel, startCmds,
-        new GotoCmd(Token.NoToken, new List<String> {origStartBlock.Label}, new List<Block> {origStartBlock}));
+        new GotoCmd(impl.tok, new List<String> {origStartBlock.Label}, new List<Block> {origStartBlock}));
 
-      impl.Blocks[0] = insertionPoint; // make insertionPoint the start block
-      impl.Blocks.Add(origStartBlock); // and put the previous start block at the end of the list
+      impl.Blocks.Insert(0, insertionPoint); // make insertionPoint the start block
 
       // (free and checked) requires clauses
       foreach (Requires req in impl.Proc.Requires)
@@ -234,7 +233,7 @@ namespace VC
       {
         Contract.Assert(req != null);
         Expr e = Substituter.Apply(formalProcImplSubst, req.Condition);
-        AssumeCmd c = new AssumeCmd(req.tok, e);
+        AssumeCmd c = new AssumeCmd(req.tok, e, CivlAttributes.ApplySubstitutionToPoolHints(formalProcImplSubst, req.Attributes));
         // Copy any {:id ...} from the precondition to the assumption, so
         // we can track it while analyzing verification coverage.
         (c as ICarriesAttributes).CopyIdFrom(req.tok, req);
@@ -506,17 +505,17 @@ namespace VC
     }
 
 
-    public static void EmitImpl(VCGenOptions options, ImplementationRun run, bool printDesugarings)
+    public static void EmitImpl(VCGenOptions options, ImplementationRun run, bool printDesugarings, IEnumerable<Block> overrideBlocks = null)
     {
       var impl = run.Implementation;
+      overrideBlocks ??= impl.Blocks;
+      
       Contract.Requires(impl != null);
-      int oldPrintUnstructured = options.PrintUnstructured;
-      options.PrintUnstructured = 2; // print only the unstructured program
       bool oldPrintDesugaringSetting = options.PrintDesugarings;
       options.PrintDesugarings = printDesugarings;
-      impl.Emit(new TokenTextWriter("<console>", run.OutputWriter, /*setTokens=*/ false, /*pretty=*/ false, options), 0);
+      var writer = new TokenTextWriter("<console>", run.OutputWriter, /*setTokens=*/ false, /*pretty=*/ false, options);
+      impl.EmitImplementation(writer, 0, overrideBlocks, true);
       options.PrintDesugarings = oldPrintDesugaringSetting;
-      options.PrintUnstructured = oldPrintUnstructured;
     }
 
 
@@ -546,20 +545,19 @@ namespace VC
         if (returnBlocks > 1)
         {
           string unifiedExitLabel = "GeneratedUnifiedExit";
-          Block unifiedExit;
-          unifiedExit = new Block(new Token(-17, -4), unifiedExitLabel, new List<Cmd>(),
+          var unifiedExit = new Block(new Token(-17, -4), unifiedExitLabel, new List<Cmd>(),
             new ReturnCmd(impl.StructuredStmts != null ? impl.StructuredStmts.EndCurly : Token.NoToken));
           Contract.Assert(unifiedExit != null);
           foreach (Block b in impl.Blocks)
           {
-            if (b.TransferCmd is ReturnCmd)
+            if (b.TransferCmd is ReturnCmd returnCmd)
             {
               List<String> labels = new List<String>();
               labels.Add(unifiedExitLabel);
               List<Block> bs = new List<Block>();
               bs.Add(unifiedExit);
-              GotoCmd go = new GotoCmd(Token.NoToken, labels, bs);
-              gotoCmdOrigins[go] = (ReturnCmd) b.TransferCmd;
+              GotoCmd go = new GotoCmd(returnCmd.tok, labels, bs);
+              gotoCmdOrigins[go] = returnCmd;
               b.TransferCmd = go;
               unifiedExit.Predecessors.Add(b);
             }

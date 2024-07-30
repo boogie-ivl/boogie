@@ -65,7 +65,8 @@ namespace Microsoft.Boogie
     public int VerifySnapshots { get; set; } = -1;
     public bool VerifySeparately { get; set; }
     public string PrintFile { get; set; }
-    public string PrintPrunedFile { get; set; }
+    public string PrintSplitFile { get; set; }
+    public bool PrintSplitDeclarations { get; set; }
 
     /**
      * Whether to emit {:qid}, {:skolemid} and set-info :boogie-vc-id
@@ -88,9 +89,9 @@ namespace Microsoft.Boogie
       set => printDesugarings = value;
     }
 
-    public bool PrintPassive {
-      get => printPassive;
-      set => printPassive = value;
+    public string PrintPassiveFile {
+      get => printPassiveFile;
+      set => printPassiveFile = value;
     }
 
     public List<Action<ExecutionEngineOptions, ProcessedProgram>> UseResolvedProgram { get; } = new();
@@ -600,7 +601,7 @@ namespace Microsoft.Boogie
     private bool printWithUniqueAstIds = false;
     private int printUnstructured = 0;
     private bool printDesugarings = false;
-    private bool printPassive = false;
+    private string printPassiveFile;
     private bool emitDebugInformation = true;
     private bool normalizeNames;
     private bool normalizeDeclarationOrder = true;
@@ -698,9 +699,25 @@ namespace Microsoft.Boogie
           return true;
 
         case "printPruned":
+        case "printSplit":
           if (ps.ConfirmArgumentCount(1))
           {
-            PrintPrunedFile = args[ps.i];
+            PrintSplitFile = args[ps.i];
+          }
+
+          return true;
+        case "printSplitDeclarations":
+          if (ps.ConfirmArgumentCount(0))
+          {
+            PrintSplitDeclarations = true;
+          }
+
+          return true;
+        
+        case "printPassive":
+          if (ps.ConfirmArgumentCount(1))
+          {
+            PrintPassiveFile = args[ps.i];
           }
 
           return true;

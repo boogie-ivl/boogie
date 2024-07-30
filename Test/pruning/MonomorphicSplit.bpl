@@ -1,5 +1,5 @@
-// RUN: %parallel-boogie /prune:1 /errorTrace:0 /printPruned:"%t" "%s" > "%t"
-// RUN: %OutputCheck "%s" --file-to-check="%t-after#0-monomorphicSplit.bpl"
+// RUN: %parallel-boogie /prune:1 /errorTrace:0 /printSplit:"%t" /printSplitDeclarations "%s" > "%t"
+// RUN: %OutputCheck "%s" --file-to-check="%t-monomorphicSplit--1.spl"
 
 // The following checks are a bit simplistic, but this is
 // on purpose to reduce brittleness. We assume there would now be two uses clauses
@@ -7,7 +7,7 @@
 // the instantiations of the original axiom.
 // 
 // Last CHECK-NOT is for ensuring definition axioms are not printed outside
-// uses clauses when using /printPruned.
+// uses clauses when using /printSplitDeclarations.
 
 // CHECK-L: uses
 // CHECK-NEXT-L: axiom

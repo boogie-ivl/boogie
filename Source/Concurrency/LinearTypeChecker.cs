@@ -11,6 +11,7 @@ namespace Microsoft.Boogie
     public Program program;
     private CheckingContext checkingContext;
     private CivlTypeChecker civlTypeChecker;
+    private Dictionary<Type, ActionDecl> pendingAsyncTypeToActionDecl;
     private Dictionary<Type, LinearDomain> permissionTypeToLinearDomain;
     private Dictionary<Type, Dictionary<Type, Function>> collectors;
     private Dictionary<Absy, HashSet<Variable>> availableLinearVars;
@@ -20,6 +21,11 @@ namespace Microsoft.Boogie
       this.civlTypeChecker = civlTypeChecker;
       this.program = civlTypeChecker.program;
       this.checkingContext = civlTypeChecker.checkingContext;
+      this.pendingAsyncTypeToActionDecl = new ();
+      foreach (var actionDecl in program.TopLevelDeclarations.OfType<ActionDecl>().Where(actionDecl => actionDecl.MaybePendingAsync))
+      {
+        pendingAsyncTypeToActionDecl[actionDecl.PendingAsyncType] = actionDecl;
+      }
       // other fields are initialized in the TypeCheck method
     }
 
@@ -218,6 +224,24 @@ namespace Microsoft.Boogie
             else
             {
               Error(ie, $"unavailable source {ie} for linear parameter at position {i}");
+            }
+          }
+          var originalProc = (Procedure)Monomorphizer.GetOriginalDecl(callCmd.Proc);
+          if (originalProc.Name == "create_asyncs")
+          {
+            var attr = QKeyValue.FindAttribute(callCmd.Attributes, x => x.Key == "linear");
+            if (attr != null)
+            {
+              attr.Params.OfType<IdentifierExpr>().ForEach(ie => {
+                if (start.Contains(ie.Decl))
+                {
+                  start.Remove(ie.Decl);
+                }
+                else
+                {
+                  Error(ie, $"unavailable linear source");
+                }
+              });
             }
           }
           AddAvailableVars(callCmd, start);
@@ -593,6 +617,72 @@ namespace Microsoft.Boogie
           }
         }
       }
+
+      var originalProc = (Procedure)Monomorphizer.GetOriginalDecl(node.Proc);
+      if (originalProc.Name == "create_multi_asyncs" || originalProc.Name == "create_asyncs")
+      {
+        var actionDecl = GetActionDeclFromCreateAsyncs(node);
+        if (originalProc.Name == "create_multi_asyncs")
+        {
+          foreach (var inParam in actionDecl.InParams.Where(inParam => FindLinearKind(inParam) != LinearKind.ORDINARY))
+          {
+            Error(node, $"linear parameters not allowed on pending async");
+          }
+        }
+        else if (originalProc.Name == "create_asyncs")
+        {
+          var linearArgumentTypes = new List<Type>();
+          foreach (var inParam in actionDecl.InParams.Where(inParam => FindLinearKind(inParam) != LinearKind.ORDINARY))
+          {
+            if (inParam.TypedIdent.Type is CtorType ctorType)
+            {
+              var originalTypeCtorDecl = Monomorphizer.GetOriginalDecl(ctorType.Decl);
+              if (originalTypeCtorDecl.Name == "One")
+              {
+                var typeInstantiation = civlTypeChecker.program.monomorphizer.GetTypeInstantiation(ctorType.Decl);
+                var setType = TypeHelper.CtorType(civlTypeChecker.program.monomorphizer.InstantiateTypeCtorDecl("Set", typeInstantiation));
+                linearArgumentTypes.Add(setType);
+                continue;
+              }
+              else if (originalTypeCtorDecl.Name == "Set")
+              {
+                linearArgumentTypes.Add(ctorType);
+                continue;
+              }
+            }
+            Error(node, $"linear parameter must be of type One or Set");
+          }
+          var attr = QKeyValue.FindAttribute(node.Attributes, x => x.Key == "linear");
+          var attrParams = attr == null ? new List<object>() : attr.Params;
+          var identifierExprs = attrParams.OfType<IdentifierExpr>().ToList();
+          if (identifierExprs.Count != attrParams.Count())
+          {
+            Error(node, $"each linear source must be a variable");
+          }
+          else if (identifierExprs.Count != linearArgumentTypes.Count)
+          {
+            Error(node, $"number of linear sources must match the number of linear parameters");
+          }
+          else
+          {
+            foreach (var (ie, type) in identifierExprs.Zip(linearArgumentTypes))
+            {
+              if (ie.Decl is LocalVariable || ie.Decl is Formal)
+              {
+                if (!ie.Decl.TypedIdent.Type.Equals(type))
+                {
+                  Error(ie, $"expected type {type}");
+                }
+              }
+              else
+              {
+                Error(ie, $"expected local or formal variable");
+              }
+            }
+          }
+        }
+      }
+
       return base.VisitCallCmd(node);
     }
 
@@ -899,6 +989,12 @@ namespace Microsoft.Boogie
       var typeInstantiation = monomorphizer.GetTypeInstantiation(typeCtorDecl);
       var typeParamInstantiationMap = new Dictionary<string, Type>() { { "T", typeInstantiation[0] }, { "U", typeInstantiation[1] } };
       return monomorphizer.InstantiateFunction("Map_WellFormed", typeParamInstantiationMap);
+    }
+
+    public ActionDecl GetActionDeclFromCreateAsyncs(CallCmd callCmd)
+    {
+      var pendingAsyncType = civlTypeChecker.program.monomorphizer.GetTypeInstantiation(callCmd.Proc)["T"];
+      return pendingAsyncTypeToActionDecl[pendingAsyncType];
     }
 
     #endregion

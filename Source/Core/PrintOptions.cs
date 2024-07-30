@@ -13,13 +13,13 @@ public interface PrintOptions {
   bool PrintInlined { get; }
   int StratifiedInlining { get; }
   bool PrintDesugarings { get; set; }
-  bool PrintPassive { get; set; }
+  string PrintPassiveFile { get; set; }
   int PrintUnstructured { get; set; }
   bool ReflectAdd { get; }
 }
 
 record PrintOptionsRec(bool PrintWithUniqueASTIds, bool PrintInstrumented, bool PrintInlined, int StratifiedInlining, bool ReflectAdd) : PrintOptions {
   public bool PrintDesugarings { get; set; }
-  public bool PrintPassive { get; set; }
+  public string PrintPassiveFile { get; set; }
   public int PrintUnstructured { get; set; }
 }

@@ -2,7 +2,7 @@
 
   <!-- Target framework and package configuration -->
   <PropertyGroup>
-    <Version>3.2.2</Version>
+    <Version>3.2.3</Version>
     <TargetFramework>net6.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Authors>Boogie</Authors>

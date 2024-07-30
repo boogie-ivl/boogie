@@ -372,9 +372,8 @@ namespace Microsoft.Boogie
         {
           Cmd cmd = cmds[i];
 
-          if (cmd is CallCmd)
+          if (cmd is CallCmd callCmd && !callCmd.IsAsync)
           {
-            CallCmd callCmd = (CallCmd) cmd;
             Implementation impl = FindProcImpl(program, callCmd.Proc);
             if (impl == null)
             {

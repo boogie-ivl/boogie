@@ -8,14 +8,14 @@ async atomic action {:layer 1,2} A () {}
 left action {:layer 1} B ()
 creates A;
 {
-  call create_async(A());
+  async call A();
 }
 
 left action {:layer 1} C (flag:bool)
 creates A;
 {
   if (flag) {
-    call create_async(A());
+    async call A();
   }
 }
 
@@ -55,7 +55,7 @@ refines TEST2;
 atomic action {:layer 2} TEST2 ()
 creates A;
 {
-  call create_async(A());
+  async call A();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -72,6 +72,11 @@ function {:inline} JoinPermissions(r: Round) : Set Permission
   Set((lambda {:pool "Permission"} p:Permission :: {:add_to_pool "Permission", p} p is JoinPerm && p->r == r))
 }
 
+function {:inline} VotePermissions(r: Round) : Set Permission
+{
+  Set((lambda {:pool "Permission"} p:Permission :: {:add_to_pool "Permission", p} p is VotePerm && p->r == r))
+}
+
 function {:inline} ProposePermissions(r: Round) : Set Permission
 {
   Set((lambda {:pool "Permission"} p:Permission :: {:add_to_pool "Permission", p} !(p is JoinPerm) && p->r == r))

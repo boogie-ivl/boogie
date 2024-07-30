@@ -12,4 +12,4 @@ left-mover.bpl(26,24): Error: Cooperation check for block failed
 Execution trace:
     (0,0): init
 
-Boogie program verifier finished with 2 verified, 3 errors
+Boogie program verifier finished with 3 verified, 3 errors

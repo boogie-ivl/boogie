@@ -1,8 +1,10 @@
 async atomic action {:layer 2} A_StartRound(r: Round, {:linear_in} r_lin: Set Permission)
 creates A_Join, A_Propose;
+asserts AllPermissions(r) == r_lin;
+asserts Round(r);
 {
-  assert AllPermissions(r) == r_lin;
-  assert Round(r);
+  var {:linear} r_lin': Set Permission;
+  var {:linear} joinPermissions: Set Permission;
 
   assume
     {:add_to_pool "Round", r-1}
@@ -10,21 +12,24 @@ creates A_Join, A_Propose;
     {:add_to_pool "Permission", ConcludePerm(r)}
     true;
 
-  call create_asyncs(JoinPAs(r));
-  call create_async(A_Propose(r, ProposePermissions(r)));
+  r_lin' := r_lin;
+  call joinPermissions := Set_Get(r_lin', JoinPermissions(r)->val);
+  call {:linear joinPermissions} create_asyncs(JoinPAs(r));
+  async call A_Propose(r, r_lin');
 }
 
 async atomic action {:layer 2} A_Propose(r: Round, {:linear_in} ps: Set Permission)
 creates A_Vote, A_Conclude;
 modifies voteInfo;
+asserts Round(r);
+asserts ps == ProposePermissions(r);
+asserts voteInfo[r] is None;
 {
+  var {:linear} ps': Set Permission;
+  var {:linear} concludePermission: One Permission;
   var {:pool "Round"} maxRound: int;
   var {:pool "MaxValue"} maxValue: Value;
   var {:pool "NodeSet"} ns: NodeSet;
-
-  assert Round(r);
-  assert ps == ProposePermissions(r);
-  assert voteInfo[r] is None;
 
   assume
     {:add_to_pool "Round", r, r-1}
@@ -42,8 +47,10 @@ modifies voteInfo;
       maxValue := voteInfo[maxRound]->t->value;
     }
     voteInfo[r] := Some(VoteInfo(maxValue, NoNodes()));
-    call create_asyncs(VotePAs(r, maxValue));
-    call create_async(A_Conclude(r, maxValue, One(ConcludePerm(r))));
+    ps' := ps;
+    call concludePermission := One_Get(ps', ConcludePerm(r));
+    async call A_Conclude(r, maxValue, concludePermission);
+    call {:linear ps'} create_asyncs(VotePAs(r, maxValue));
   }
 }
 

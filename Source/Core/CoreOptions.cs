@@ -82,7 +82,8 @@ namespace Microsoft.Boogie
     int VcsMaxKeepGoingSplits { get; }
     double VcsMaxCost { get; }
     bool VcsSplitOnEveryAssert { get; }
-    string PrintPrunedFile { get; }
+    string PrintSplitFile { get; }
+    bool PrintSplitDeclarations { get; }
     bool PrettyPrint { get; }
     bool NormalizeDeclarationOrder { get; }
     XmlSink XmlSink { get; }

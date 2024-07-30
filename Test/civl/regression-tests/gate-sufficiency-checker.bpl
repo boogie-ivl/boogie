@@ -4,7 +4,7 @@
 var {:layer 0,1} x: int;
 
 atomic action {:layer 1} Foo()
-requires x > 0;
+asserts x > 0;
 {
     assert x != 0;
 }

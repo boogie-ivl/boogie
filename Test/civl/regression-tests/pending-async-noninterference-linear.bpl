@@ -15,7 +15,7 @@ modifies x;
 left action {:layer 1} ASYNC_A ({:linear_in} tid: One int)
  creates A;
 {
-  call create_async(A(tid));
+  async call A(tid);
 }
 
 yield procedure {:layer 1} dummy () {}

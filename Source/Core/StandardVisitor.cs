@@ -271,6 +271,15 @@ namespace Microsoft.Boogie
       return callCmds;
     }
 
+    public virtual List<AssertCmd> VisitAssertCmdSeq(List<AssertCmd> assertCmds)
+    {
+      for (int i = 0; i < assertCmds.Count; i++)
+      {
+        assertCmds[i] = (AssertCmd)VisitAssertCmd(assertCmds[i]);
+      }
+      return assertCmds;
+    }
+
     public virtual Cmd VisitParCallCmd(ParCallCmd node)
     {
       Contract.Requires(node != null);
@@ -676,6 +685,7 @@ namespace Microsoft.Boogie
         node.InvariantAction = VisitActionDeclRef(node.InvariantAction);
       }
       node.YieldRequires = VisitCallCmdSeq(node.YieldRequires);
+      node.Asserts = VisitAssertCmdSeq(node.Asserts);
       return VisitProcedure(node);
     }
 

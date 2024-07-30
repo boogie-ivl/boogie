@@ -8,10 +8,7 @@ requires {:layer 1} g > 0;
 ensures {:layer 1} g > 0;
 { }
 
-atomic action {:layer 1} A()
-requires g > 0;
-{}
-
-atomic action {:layer 2} B()
-requires g > 0;
+atomic action {:layer 1,2} B()
+requires {:layer 1} g > 0;
+requires {:layer 2} g > 0;
 {}

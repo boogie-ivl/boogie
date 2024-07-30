@@ -297,7 +297,15 @@ namespace Microsoft.Boogie
           }
           else if (IsRefinementLayer)
           {
-            AddPendingAsync(newCall, yieldingProc);
+            if (newCall.HasAttribute(CivlAttributes.SKIP))
+            {
+              var calleeRefinedAction = PrepareNewCall(newCall, yieldingProc);
+              InjectGate(calleeRefinedAction, newCall);
+            }
+            else
+            {
+              AddPendingAsync(newCall, yieldingProc);
+            }
           }
         }
         else
@@ -406,7 +414,7 @@ namespace Microsoft.Boogie
       }
     }
 
-    private void AddActionCall(CallCmd newCall, YieldProcedureDecl calleeActionProc)
+    private Action PrepareNewCall(CallCmd newCall, YieldProcedureDecl calleeActionProc)
     {
       var calleeRefinedAction = civlTypeChecker.Action(calleeActionProc.RefinedActionAtLayer(layerNum));
 
@@ -438,6 +446,12 @@ namespace Microsoft.Boogie
       newCall.Ins = newIns;
       newCall.Outs = newOuts;
 
+      return calleeRefinedAction;
+    }
+
+    private void AddActionCall(CallCmd newCall, YieldProcedureDecl calleeActionProc)
+    {
+      var calleeRefinedAction = PrepareNewCall(newCall, calleeActionProc);
       InjectGate(calleeRefinedAction, newCall, !IsRefinementLayer);
       newCmdSeq.Add(newCall);
 

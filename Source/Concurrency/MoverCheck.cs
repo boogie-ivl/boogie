@@ -442,7 +442,7 @@ namespace Microsoft.Boogie
       List<Requires> requires =
         DisjointnessAndWellFormedRequires(impl.InParams.Where(v => LinearTypeChecker.FindLinearKind(v) != LinearKind.LINEAR_OUT),
           frame).ToList();
-      requires.AddRange(action.Gate.Select(assertCmd => new Requires(false, assertCmd.Expr)));
+      requires.AddRange(action.Gate.Select(assertCmd => new Requires(Token.NoToken, false, assertCmd.Expr, null, assertCmd.Attributes)));
       if (moverCheckContext != null)
       {
         checkerName = $"CooperationChecker_{action.Name}_{moverCheckContext.layer}";
@@ -454,9 +454,8 @@ namespace Microsoft.Boogie
         TransitionRelationComputation.Cooperation(civlTypeChecker, action, frame),
         $"Cooperation check for {action.Name} failed");
 
-      // call action after the cooperation check to exploit quantifier instantiation hints in the body
       AddChecker(checkerName, new List<Variable>(impl.InParams), new List<Variable>(impl.OutParams),
-        new List<Variable>(), requires, new List<Cmd> { cooperationCheck, ActionCallCmd(action, impl) });
+        new List<Variable>(), requires, new List<Cmd> { cooperationCheck });
     }
   }
 }

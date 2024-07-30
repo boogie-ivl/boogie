@@ -17,7 +17,7 @@ creates main_f;
     if (*) {
     }
     else {
-      call create_async(main_f());
+      async call main_f();
     }
 }
 
@@ -30,7 +30,7 @@ creates main_f;
     if (*) {
     }
     else {
-      call create_async(main_f());
+      async call main_f();
       call set_choice(main_f());
     }
 }

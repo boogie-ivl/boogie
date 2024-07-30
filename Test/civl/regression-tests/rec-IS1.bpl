@@ -8,8 +8,8 @@ refines final using Inv;
 creates main_f'';
 {
   if (*) {
-  } else{
-    call create_async(main_f''(l));
+  } else {
+    async call main_f''(l);
   }
 }
 
@@ -24,7 +24,7 @@ creates main_f'';
   assert l != g;
   if (*) {
   } else {
-    call create_async(main_f''(l));
+    async call main_f''(l);
     call set_choice(main_f''(l));
   }
 }

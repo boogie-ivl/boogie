@@ -4,7 +4,7 @@
 atomic action {:layer 3} A_Foo()
 creates A_Incr;
 {
-    call create_async(A_Incr());
+    async call A_Incr();
 }
 
 yield procedure {:layer 2} Foo()

@@ -1,12 +1,5 @@
 implementation Foo() returns (y: int)
 {
-  var x: int;
-  var x#AT#0: int;
-  var y#AT#0: int;
-  var x#AT#1: int;
-  var y#AT#1: int;
-  var y#AT#2: int;
-
 
   PreconditionGeneratedEntry:
     goto anon0;

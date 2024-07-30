@@ -45,9 +45,6 @@ namespace Microsoft.Boogie
       // Desugaring of yielding procedures
       YieldingProcChecker.AddCheckers(civlTypeChecker, decls);
 
-      // Linear type checks
-      LinearityChecker.AddCheckers(civlTypeChecker, decls);
-
       if (!options.TrustSequentialization)
       {
         Sequentialization.AddCheckers(civlTypeChecker, decls);

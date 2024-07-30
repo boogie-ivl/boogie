@@ -13,7 +13,7 @@ atomic action {:layer 1} A_Service()
 refines A_Inc;
 creates A_Inc;
 {
-  call create_async(A_Inc());
+  async call A_Inc();
 }
 yield procedure {:layer 0} Service ()
 refines A_Service;

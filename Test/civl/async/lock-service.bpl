@@ -77,7 +77,7 @@ modifies l;
   assert tid->val != nil;
   assume l == nil;
   l := tid->val;
-  call create_async(A_Callback(tid));
+  async call A_Callback(tid);
 }
 yield procedure {:layer 2} GetLockAndCallback ({:linear_in} tid: One Tid)
 refines A_GetLockAndCallback;

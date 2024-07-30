@@ -11,3 +11,8 @@ ensures false;
 action {:layer 1} bar()
 requires false;
 { }
+
+atomic action {:layer 1} A()
+requires {:layer 2} false;
+{}
+

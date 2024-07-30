@@ -5,6 +5,24 @@ using Microsoft.Boogie.GraphUtil;
 
 namespace Microsoft.Boogie
 {
+  public class LinearityCheck
+  {
+    public LinearDomain domain;
+    public Expr assume;
+    public Expr assert;
+    public string message;
+    public string checkName;
+
+    public LinearityCheck(LinearDomain domain, Expr assume, Expr assert, string message, string checkName)
+    {
+      this.domain = domain;
+      this.assume = assume;
+      this.assert = assert;
+      this.message = message;
+      this.checkName = checkName;
+    }
+  }
+
   public enum InductiveSequentializationRule
   {
     ISL,
@@ -292,16 +310,14 @@ namespace Microsoft.Boogie
 
     private Cmd Transform(Dictionary<CtorType, Implementation> eliminatedPendingAsyncs, Cmd cmd, HashSet<Variable> modifies)
     {
-      if (cmd is CallCmd callCmd && callCmd.Proc.OriginalDeclWithFormals is { Name: "create_async" })
+      if (cmd is CallCmd callCmd && callCmd.IsAsync)
       {
-        var pendingAsyncType = (CtorType)civlTypeChecker.program.monomorphizer.GetTypeInstantiation(callCmd.Proc)["T"];
-        var datatypeTypeCtorDecl = (DatatypeTypeCtorDecl)pendingAsyncType.Decl;
+        var actionDecl = (ActionDecl)callCmd.Proc;
+        var pendingAsyncType = actionDecl.PendingAsyncType;
         if (eliminatedPendingAsyncs.ContainsKey(pendingAsyncType))
         {
           var newCallee = eliminatedPendingAsyncs[pendingAsyncType].Proc;
-          var newIns = datatypeTypeCtorDecl.Constructors[0].InParams
-            .Select(x => (Expr)ExprHelper.FieldAccess(callCmd.Ins[0], x.Name)).ToList();
-          var newCallCmd = new CallCmd(callCmd.tok, newCallee.Name, newIns, new List<IdentifierExpr>())
+          var newCallCmd = new CallCmd(callCmd.tok, newCallee.Name, callCmd.Ins, new List<IdentifierExpr>())
           {
             Proc = newCallee
           };

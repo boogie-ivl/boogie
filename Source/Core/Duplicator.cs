@@ -194,6 +194,11 @@ namespace Microsoft.Boogie
       return base.VisitCallCmdSeq(new List<CallCmd>(callCmds));
     }
 
+    public override List<AssertCmd> VisitAssertCmdSeq(List<AssertCmd> assertCmds)
+    {
+      return base.VisitAssertCmdSeq(new List<AssertCmd>(assertCmds));
+    }
+
     public override Constant VisitConstant(Constant node)
     {
       //Contract.Requires(node != null);

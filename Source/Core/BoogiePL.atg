@@ -677,6 +677,7 @@ ActionDecl<bool isPure, out ActionDecl actionDecl, out Implementation impl, out 
      ActionDeclRef invariantAction = null;
      List<Requires> requires = new List<Requires>();
      List<CallCmd> yieldRequires = new List<CallCmd>();
+     List<AssertCmd> asserts = new List<AssertCmd>();
      List<Variable> locals;
      StmtList stmtList;
      QKeyValue kv = null;
@@ -691,8 +692,8 @@ ActionDecl<bool isPure, out ActionDecl actionDecl, out Implementation impl, out 
   ProcFormals<true, true, out ins>
     [ "returns" ProcFormals<false, true, out outs> ]
   ( ";"
-    { SpecAction<ref refinedAction, ref invariantAction, mods, creates, requires, yieldRequires> }
-  | { SpecAction<ref refinedAction, ref invariantAction, mods, creates, requires, yieldRequires> }
+    { SpecAction<ref refinedAction, ref invariantAction, mods, creates, requires, yieldRequires, asserts> }
+  | { SpecAction<ref refinedAction, ref invariantAction, mods, creates, requires, yieldRequires, asserts> }
     ImplBody<out locals, out stmtList>
     (.
        impl = new Implementation(name, name.val, new List<TypeVariable>(), Formal.StripWhereClauses(ins), Formal.StripWhereClauses(outs),
@@ -726,7 +727,7 @@ ActionDecl<bool isPure, out ActionDecl actionDecl, out Implementation impl, out 
          datatypeTypeCtorDecl.AddConstructor(name, name.val, fields);
        }
      }
-     actionDecl = new ActionDecl(name, name.val, moverType, ins, outs, isPure, creates, refinedAction, invariantAction, requires, yieldRequires, mods, datatypeTypeCtorDecl, kv);
+     actionDecl = new ActionDecl(name, name.val, moverType, ins, outs, isPure, creates, refinedAction, invariantAction, requires, yieldRequires, asserts, mods, datatypeTypeCtorDecl, kv);
   .)
   .
 
@@ -752,7 +753,7 @@ SpecRefinedAction<ref ActionDeclRef refinedAction>
   .)
   .
 
-SpecAction<.ref ActionDeclRef refinedAction, ref ActionDeclRef invariantAction, List<IdentifierExpr> mods, List<ActionDeclRef> creates, List<Requires> requires, List<CallCmd> yieldRequires.>
+SpecAction<.ref ActionDeclRef refinedAction, ref ActionDeclRef invariantAction, List<IdentifierExpr> mods, List<ActionDeclRef> creates, List<Requires> requires, List<CallCmd> yieldRequires, List<AssertCmd> asserts.>
 =
   (
     SpecRefinedAction<ref refinedAction>
@@ -762,6 +763,7 @@ SpecAction<.ref ActionDeclRef refinedAction, ref ActionDeclRef invariantAction, 
   | SpecModifies<mods>
   | SpecCreates<creates>
   | SpecYieldRequires<requires, yieldRequires>
+  | SpecAsserts<asserts>
   )
   .
   
@@ -806,6 +808,16 @@ YieldProcedureDecl<out YieldProcedureDecl ypDecl, out Implementation impl>
       .)
     )
     (. ypDecl = new YieldProcedureDecl(name, name.val, moverType, ins, outs, pre, mods, post, yieldRequires, yieldEnsures, yieldPreserves, refinedAction, kv); .)
+  .
+
+SpecAsserts<. List<AssertCmd> asserts .>
+= (. Expr e; Token tok; QKeyValue kv = null; .)
+  "asserts"              (. tok = t; .)
+  (
+    { Attribute<ref kv> }
+    Proposition<out e>  (. asserts.Add(new AssertCmd(tok, e, kv)); .)
+  )
+  ";"
   .
 
 SpecYieldRequires<. List<Requires> pre, List<CallCmd> yieldRequires .>

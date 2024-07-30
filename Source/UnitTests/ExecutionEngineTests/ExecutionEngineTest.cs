@@ -341,6 +341,10 @@ procedure Foo(x: int) {
     Assert.AreEqual(null, runDuringRun2);
     var statusList2 = new List<IVerificationStatus>();
     secondStatuses.Subscribe(statusList2.Add);
+    while (statusList1.Last() is not Stale)
+    {
+      await Task.Delay(10);
+    }
     returnCheckSat.Release(2);
     var finalResult = await secondStatuses.ToTask();
     Assert.IsTrue(finalResult is Completed);

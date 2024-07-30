@@ -1,4 +1,6 @@
 assert-layers.bpl(5,0): Error: expected layers
 assert-layers.bpl(6,0): Error: expected layers
 assert-layers.bpl(8,2): Error: expected layers
-3 name resolution errors detected in assert-layers.bpl
+assert-layers.bpl(12,0): Error: expected layers
+assert-layers.bpl(16,0): Error: each layer must be within [1, 1]
+5 name resolution errors detected in assert-layers.bpl

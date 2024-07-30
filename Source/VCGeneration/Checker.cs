@@ -163,7 +163,7 @@ namespace Microsoft.Boogie
       // TODO(wuestholz): Is this lock necessary?
       lock (Program.TopLevelDeclarations)
       {
-        var declarations = split.TopLevelDeclarations;
+        var declarations = split.PrunedDeclarations;
         var reorderedDeclarations = GetReorderedDeclarations(declarations, SolverOptions.RandomSeed);
         foreach (var declaration in reorderedDeclarations) {
           Contract.Assert(declaration != null);

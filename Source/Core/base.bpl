@@ -276,7 +276,8 @@ function {:inline} One_Collector<T>(a: One T): [T]bool
 
 datatype Fraction<T, K> { Fraction(val: T, id: K, ids: Set K) }
 
-function {:inline} AllPieces<T,K>(t: T, ids: Set K): Set (Fraction T K) {
+function {:inline} AllPieces<T,K>(t: T, ids: Set K): Set (Fraction T K)
+{
   Set((lambda piece: Fraction T K :: piece->val == t && Set_Contains(ids, piece->id) && piece->ids == ids))
 }
 

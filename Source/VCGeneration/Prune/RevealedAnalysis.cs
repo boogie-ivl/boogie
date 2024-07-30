@@ -16,11 +16,11 @@ record RevealedState(HideRevealCmd.Modes Mode, IImmutableSet<Function> Offset) {
   public static readonly RevealedState AllHidden = new(HideRevealCmd.Modes.Hide, ImmutableHashSet<Function>.Empty);
 }
 
-class RevealedAnalysis : DataflowAnalysis<Cmd, ImmutableStack<RevealedState>> {
+class RevealedAnalysis : DataflowAnalysis<Absy, ImmutableStack<RevealedState>> {
   
-  public RevealedAnalysis(IReadOnlyList<Cmd> roots, 
-    Func<Cmd, IEnumerable<Cmd>> getNext, 
-    Func<Cmd, IEnumerable<Cmd>> getPrevious) : base(roots, getNext, getPrevious)
+  public RevealedAnalysis(IReadOnlyList<Absy> roots, 
+    Func<Absy, IEnumerable<Absy>> getNext, 
+    Func<Absy, IEnumerable<Absy>> getPrevious) : base(roots, getNext, getPrevious)
   {
   }
 
@@ -80,7 +80,7 @@ class RevealedAnalysis : DataflowAnalysis<Cmd, ImmutableStack<RevealedState>> {
     return state with { Offset = newOffset };
   }
   
-  protected override ImmutableStack<RevealedState> Update(Cmd node, ImmutableStack<RevealedState> state) {
+  protected override ImmutableStack<RevealedState> Update(Absy node, ImmutableStack<RevealedState> state) {
     if (state.IsEmpty) {
       throw new Exception("Unbalanced use of push and pop commands");
     }
