@@ -31,8 +31,8 @@ public abstract class MutatingVCExprVisitor<Arg>
 
   public List<VCExpr /*!*/> /*!*/ MutateSeq(IEnumerable<VCExpr /*!*/> /*!*/ exprs, Arg arg)
   {
-    Contract.Requires(cce.NonNullElements(exprs));
-    Contract.Ensures(cce.NonNullElements(Contract.Result<List<VCExpr>>()));
+    Contract.Requires(Cce.NonNullElements(exprs));
+    Contract.Ensures(Cce.NonNullElements(Contract.Result<List<VCExpr>>()));
     List<VCExpr /*!*/> /*!*/
       res = new List<VCExpr /*!*/>();
     foreach (VCExpr /*!*/ expr in exprs)
@@ -46,8 +46,8 @@ public abstract class MutatingVCExprVisitor<Arg>
 
   private List<VCExpr /*!*/> /*!*/ MutateList(List<VCExpr /*!*/> /*!*/ exprs, Arg arg)
   {
-    Contract.Requires(cce.NonNullElements(exprs));
-    Contract.Ensures(cce.NonNullElements(Contract.Result<List<VCExpr>>()));
+    Contract.Requires(Cce.NonNullElements(exprs));
+    Contract.Ensures(Cce.NonNullElements(Contract.Result<List<VCExpr>>()));
     bool changed = false;
     List<VCExpr /*!*/> /*!*/
       res = new List<VCExpr /*!*/>();
@@ -104,8 +104,8 @@ public abstract class MutatingVCExprVisitor<Arg>
   [ContractInvariantMethod]
   void ObjectInvarianta()
   {
-    Contract.Invariant(cce.NonNullElements(NAryExprResultStack));
-    Contract.Invariant(cce.NonNullElements(NAryExprTodoStack));
+    Contract.Invariant(Cce.NonNullElements(NAryExprResultStack));
+    Contract.Invariant(Cce.NonNullElements(NAryExprTodoStack));
   }
 
 
@@ -198,7 +198,7 @@ public abstract class MutatingVCExprVisitor<Arg>
     bool changed,
     Arg arg)
   {
-    Contract.Requires(cce.NonNullElements(newSubExprs));
+    Contract.Requires(Cce.NonNullElements(newSubExprs));
     Contract.Ensures(Contract.Result<VCExpr>() != null);
 
     if (changed)
@@ -223,8 +223,8 @@ public abstract class MutatingVCExprVisitor<Arg>
 
   protected List<VCTrigger /*!*/> /*!*/ MutateTriggers(List<VCTrigger /*!*/> /*!*/ triggers, Arg arg)
   {
-    Contract.Requires(cce.NonNullElements(triggers));
-    Contract.Ensures(cce.NonNullElements(Contract.Result<List<VCTrigger>>()));
+    Contract.Requires(Cce.NonNullElements(triggers));
+    Contract.Ensures(Cce.NonNullElements(Contract.Result<List<VCTrigger>>()));
     List<VCTrigger /*!*/> /*!*/
       newTriggers = new List<VCTrigger /*!*/>();
     bool changed = false;
@@ -275,10 +275,10 @@ public abstract class MutatingVCExprVisitor<Arg>
     // visit the trigger expressions as well
     List<VCTrigger /*!*/> /*!*/
       triggers = node.Triggers;
-    Contract.Assert(cce.NonNullElements(triggers));
+    Contract.Assert(Cce.NonNullElements(triggers));
     List<VCTrigger /*!*/> /*!*/
       newTriggers = MutateTriggers(triggers, arg);
-    Contract.Assert(cce.NonNullElements(newTriggers));
+    Contract.Assert(Cce.NonNullElements(newTriggers));
     if (!Object.ReferenceEquals(triggers, newTriggers))
     {
       changed = true;

@@ -157,12 +157,12 @@ namespace Microsoft.Boogie
 
         public override bool IsMutable
         {
-          get { throw new cce.UnreachableException(); }
+          get { throw new Cce.UnreachableException(); }
         }
 
         public override void Register(ResolutionContext rc)
         {
-          throw new cce.UnreachableException();
+          throw new Cce.UnreachableException();
         }
       }
     }

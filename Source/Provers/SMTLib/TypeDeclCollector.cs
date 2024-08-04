@@ -127,7 +127,7 @@ namespace Microsoft.Boogie.SMTLib
     {
       get
       {
-        Contract.Ensures(cce.NonNullElements(Contract.Result<List<string>>()));
+        Contract.Ensures(Cce.NonNullElements(Contract.Result<List<string>>()));
 
         List<string> /*!>!*/
           res = new List<string /*!*/>();
@@ -138,7 +138,7 @@ namespace Microsoft.Boogie.SMTLib
 
     public List<string /*!>!*/> GetNewDeclarations()
     {
-      Contract.Ensures(cce.NonNullElements(Contract.Result<List<string>>()));
+      Contract.Ensures(Cce.NonNullElements(Contract.Result<List<string>>()));
       List<string> /*!>!*/
         res = new List<string /*!*/>();
       res.AddRange(IncDecls);

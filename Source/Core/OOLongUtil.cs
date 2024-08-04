@@ -92,16 +92,16 @@ namespace Boogie.Util
 
     public override void Close()
     {
-      cce.BeginExpose(this);
+      Cce.BeginExpose(this);
       {
         reader.Close();
       }
-      cce.EndExpose();
+      Cce.EndExpose();
     }
 
     public override int Read()
     {
-      cce.BeginExpose(this);
+      Cce.BeginExpose(this);
       try
       {
         while (readAhead == null)
@@ -129,7 +129,7 @@ namespace Boogie.Util
       }
       finally
       {
-        cce.EndExpose();
+        Cce.EndExpose();
       }
     }
 
@@ -155,12 +155,12 @@ namespace Boogie.Util
       string res;
       if (readAhead != null)
       {
-        cce.BeginExpose(this);
+        Cce.BeginExpose(this);
         {
           res = readAhead.Substring(readAheadConsumed);
           readAhead = null;
         }
-        cce.EndExpose();
+        Cce.EndExpose();
       }
       else
       {
@@ -181,7 +181,7 @@ namespace Boogie.Util
     void ObjectInvariant()
     {
       Contract.Invariant(readState != null);
-      Contract.Invariant(cce.NonNullElements(defines));
+      Contract.Invariant(Cce.NonNullElements(defines));
       Contract.Invariant(0 <= ignoreCutoff && ignoreCutoff <= readState.Count);
     }
 
@@ -190,7 +190,7 @@ namespace Boogie.Util
       : base(reader)
     {
       Contract.Requires(reader != null);
-      Contract.Requires(cce.NonNullElements(defines));
+      Contract.Requires(Cce.NonNullElements(defines));
       this.defines = defines;
     }
 

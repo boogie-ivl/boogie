@@ -62,19 +62,19 @@ namespace VC
 
       for (int i = b.Cmds.Count; --i >= 0;)
       {
-        res = Cmd(b, cce.NonNull(b.Cmds[i]), res, ctxt);
+        res = Cmd(b, Cce.NonNull(b.Cmds[i]), res, ctxt);
       }
 
       ctxt.absyIds.GetId(b);
 
       try
       {
-        cce.BeginExpose(ctxt);
+        Cce.BeginExpose(ctxt);
         return res;
       }
       finally
       {
-        cce.EndExpose();
+        Cce.EndExpose();
       }
     }
 
@@ -231,7 +231,7 @@ namespace VC
       {
         ctxt.Options.OutputWriter.WriteLine(cmd.ToString());
         Contract.Assert(false);
-        throw new cce.UnreachableException(); // unexpected command
+        throw new Cce.UnreachableException(); // unexpected command
       }
     }
 
@@ -293,10 +293,10 @@ namespace VC
         }
         else
         {
-          VCExpr currentWLP = RegExpr(cce.NonNull(ch.rs[0]), N, ctxt);
+          VCExpr currentWLP = RegExpr(Cce.NonNull(ch.rs[0]), N, ctxt);
           for (int i = 1, n = ch.rs.Count; i < n; i++)
           {
-            currentWLP = ctxt.Ctxt.ExprGen.And(currentWLP, RegExpr(cce.NonNull(ch.rs[i]), N, ctxt));
+            currentWLP = ctxt.Ctxt.ExprGen.And(currentWLP, RegExpr(Cce.NonNull(ch.rs[i]), N, ctxt));
           }
 
           res = currentWLP;
@@ -307,7 +307,7 @@ namespace VC
       else
       {
         Contract.Assert(false);
-        throw new cce.UnreachableException(); // unexpected RE subtype
+        throw new Cce.UnreachableException(); // unexpected RE subtype
       }
     }
   }

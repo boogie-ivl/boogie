@@ -87,7 +87,7 @@ public class LoopExtractor {
     Dictionary<string, Dictionary<string, Block>> fullMap)
   {
     Contract.Requires(impl != null);
-    Contract.Requires(cce.NonNullElements(loopImpls));
+    Contract.Requires(Cce.NonNullElements(loopImpls));
     // Enumerate the headers
     // for each header h:
     //   create implementation p_h with
@@ -438,13 +438,13 @@ public class LoopExtractor {
         blocks = new List<Block /*!*/>();
       Block exit = new Block(Token.NoToken, "exit", new List<Cmd>(), new ReturnCmd(Token.NoToken));
       GotoCmd cmd = new GotoCmd(Token.NoToken,
-        new List<String> {cce.NonNull(blockMap[header]).Label, exit.Label},
+        new List<String> {Cce.NonNull(blockMap[header]).Label, exit.Label},
         new List<Block> {blockMap[header], exit});
 
       if (detLoopExtract) //cutting the non-determinism
       {
         cmd = new GotoCmd(Token.NoToken,
-          new List<String> {cce.NonNull(blockMap[header]).Label},
+          new List<String> {Cce.NonNull(blockMap[header]).Label},
           new List<Block> {blockMap[header]});
       }
 
@@ -463,7 +463,7 @@ public class LoopExtractor {
       {
         Contract.Assert(block != null);
         Block /*!*/
-          newBlock = cce.NonNull(blockMap[block]);
+          newBlock = Cce.NonNull(blockMap[block]);
         GotoCmd gotoCmd = block.TransferCmd as GotoCmd;
         if (gotoCmd == null)
         {

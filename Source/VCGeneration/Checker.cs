@@ -104,7 +104,7 @@ namespace Microsoft.Boogie
     {
       Pool = pool;
 
-      SolverOptions = cce.NonNull(Pool.Options.TheProverFactory).BlankProverOptions(pool.Options);
+      SolverOptions = Cce.NonNull(Pool.Options.TheProverFactory).BlankProverOptions(pool.Options);
 
       if (logFilePath != null)
       {
@@ -267,7 +267,7 @@ namespace Microsoft.Boogie
 
     private async Task Check(string descriptiveName, VCExpr vc, CancellationToken cancellationToken) {
       try {
-        outcome = await thmProver.Check(descriptiveName, vc, cce.NonNull(handler), Options.ErrorLimit,
+        outcome = await thmProver.Check(descriptiveName, vc, Cce.NonNull(handler), Options.ErrorLimit,
           cancellationToken);
       }
       catch (OperationCanceledException) {

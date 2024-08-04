@@ -119,13 +119,13 @@ namespace Microsoft.Boogie
           else if (fun is MapSelect && eSeq.Count <= 3)
           {
             // only maps with up to two arguments are supported right now (here)
-            if (cce.NonNull(eSeq[0]).ToString() == "$Heap")
+            if (Cce.NonNull(eSeq[0]).ToString() == "$Heap")
             {
               //print Index0.Index1, unless Index1 is "$elements", then just print Index0
-              string s0 = PrettyPrintBplExpr(cce.NonNull(eSeq[1]));
+              string s0 = PrettyPrintBplExpr(Cce.NonNull(eSeq[1]));
               if (eSeq.Count > 2)
               {
-                string s1 = PrettyPrintBplExpr(cce.NonNull(eSeq[2]));
+                string s1 = PrettyPrintBplExpr(Cce.NonNull(eSeq[2]));
                 if (s1 == "$elements")
                 {
                   return s0;
@@ -265,7 +265,7 @@ namespace Microsoft.Boogie
     private static readonly ConcurrentDictionary<string, int> UsedLogNames = new();
     public static (string fileName, bool reused) GetLogFilename(string descriptiveName, string filename, bool allowReuse)
     {
-      filename = SubstituteAtPROC(descriptiveName, cce.NonNull(filename));
+      filename = SubstituteAtPROC(descriptiveName, Cce.NonNull(filename));
 
       var reused = false;
       var index = UsedLogNames.AddOrUpdate(filename, 0, (_, i) => {

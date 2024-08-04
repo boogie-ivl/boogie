@@ -61,7 +61,7 @@ namespace Microsoft.Boogie.VCExprAST
     [ContractInvariantMethod]
     void ObjectInvariant()
     {
-      Contract.Invariant(cce.NonNullElements(IncAxioms));
+      Contract.Invariant(Cce.NonNullElements(IncAxioms));
     }
 
     private void AddAxiom(VCExpr /*!*/ axiom)

@@ -67,7 +67,7 @@ namespace VC
           break;
         default:
           Contract.Assert(false);
-          throw new cce.UnreachableException(); // unexpected case
+          throw new Cce.UnreachableException(); // unexpected case
       }
 
       var assume = new AssumeCmd(assrt.tok, expr);
@@ -169,9 +169,9 @@ namespace VC
 
       VCExpr vc;
       int assertionCount;
-      if (cce.NonNull(CheckerPool.Options.TheProverFactory).SupportsDags)
+      if (Cce.NonNull(CheckerPool.Options.TheProverFactory).SupportsDags)
       {
-        vc = DagVC(cce.NonNull(impl.Blocks[0]), controlFlowVariableExpr, absyIds,
+        vc = DagVC(Cce.NonNull(impl.Blocks[0]), controlFlowVariableExpr, absyIds,
           new Dictionary<Block, VCExpr>(), proverContext, out assertionCount);
       }
       else
@@ -492,7 +492,7 @@ namespace VC
       {
         Contract.Invariant(gotoCmdOrigins != null);
         Contract.Invariant(absyIds != null);
-        Contract.Invariant(cce.NonNullElements(blocks));
+        Contract.Invariant(Cce.NonNullElements(blocks));
         Contract.Invariant(callback != null);
         Contract.Invariant(context != null);
         Contract.Invariant(program != null);
@@ -520,7 +520,7 @@ namespace VC
       {
         Contract.Requires(gotoCmdOrigins != null);
         Contract.Requires(absyIds != null);
-        Contract.Requires(cce.NonNullElements(blocks));
+        Contract.Requires(Cce.NonNullElements(blocks));
         Contract.Requires(callback != null);
         Contract.Requires(context != null);
         Contract.Requires(program != null);
@@ -563,7 +563,7 @@ namespace VC
         }
 
         List<Block> trace = new List<Block>();
-        Block entryBlock = cce.NonNull(this.blocks[0]);
+        Block entryBlock = Cce.NonNull(this.blocks[0]);
         Contract.Assert(traceNodes.Contains(entryBlock));
         trace.Add(entryBlock);
 
@@ -605,7 +605,7 @@ namespace VC
         Contract.Ensures(Contract.Result<Absy>() != null);
 
         int id = int.Parse(label);
-        return cce.NonNull(absyIds.GetValue(id));
+        return Cce.NonNull(absyIds.GetValue(id));
       }
 
       public override void OnResourceExceeded(string msg, IEnumerable<Tuple<AssertCmd, TransferCmd>> assertCmds = null)
@@ -729,11 +729,11 @@ namespace VC
 
       #region Cut the backedges, push assert/assume statements from loop header into predecessors, change them all into assume statements at top of loop, introduce havoc statements
 
-      foreach (Block header in cce.NonNull(g.Headers))
+      foreach (Block header in Cce.NonNull(g.Headers))
       {
         Contract.Assert(header != null);
         IDictionary<Block, object> backEdgeNodes = new Dictionary<Block, object>();
-        foreach (Block b in cce.NonNull(g.BackEdgeNodes(header)))
+        foreach (Block b in Cce.NonNull(g.BackEdgeNodes(header)))
         {
           Contract.Assert(b != null);
           backEdgeNodes.Add(b, null);
@@ -840,10 +840,10 @@ namespace VC
 
         for (int predIndex = 0, n = header.Predecessors.Count; predIndex < n; predIndex++)
         {
-          Block pred = cce.NonNull(header.Predecessors[predIndex]);
+          Block pred = Cce.NonNull(header.Predecessors[predIndex]);
 
           // Create a block between header and pred for the predicate commands if pred has more than one successor
-          GotoCmd gotocmd = cce.NonNull((GotoCmd)pred.TransferCmd);
+          GotoCmd gotocmd = Cce.NonNull((GotoCmd)pred.TransferCmd);
           Contract.Assert(gotocmd.labelNames !=
                           null); // if "pred" is really a predecessor, it may be a GotoCmd with at least one label
           if (gotocmd.labelNames.Count > 1)
@@ -876,7 +876,7 @@ namespace VC
 
         #region Cut the back edge
 
-        foreach (Block backEdgeNode in cce.NonNull(backEdgeNodes.Keys))
+        foreach (Block backEdgeNode in Cce.NonNull(backEdgeNodes.Keys))
         {
           Contract.Assert(backEdgeNode != null);
           Debug.Assert(backEdgeNode.TransferCmd is GotoCmd,
@@ -973,7 +973,7 @@ namespace VC
     public static List<Variable> VarsAssignedInLoop(Graph<Block> g, Block header)
     {
       List<Variable> varsToHavoc = new List<Variable>();
-      foreach (Block backEdgeNode in cce.NonNull(g.BackEdgeNodes(header)))
+      foreach (Block backEdgeNode in Cce.NonNull(g.BackEdgeNodes(header)))
       {
         Contract.Assert(backEdgeNode != null);
         foreach (Block b in g.NaturalLoops(header, backEdgeNode))
@@ -993,7 +993,7 @@ namespace VC
     public static IEnumerable<Variable> VarsReferencedInLoop(Graph<Block> g, Block header)
     {
       HashSet<Variable> referencedVars = new HashSet<Variable>();
-      foreach (Block backEdgeNode in cce.NonNull(g.BackEdgeNodes(header)))
+      foreach (Block backEdgeNode in Cce.NonNull(g.BackEdgeNodes(header)))
       {
         Contract.Assert(backEdgeNode != null);
         foreach (Block b in g.NaturalLoops(header, backEdgeNode))
@@ -1044,7 +1044,7 @@ namespace VC
 
         #endregion
 
-        foreach (Block header in cce.NonNull(g.Headers))
+        foreach (Block header in Cce.NonNull(g.Headers))
         {
           Contract.Assert(header != null);
 
@@ -1113,7 +1113,7 @@ namespace VC
           #region redirect into the new loop copies and remove the original loop (but don't redirect back-edges)
 
           IDictionary<Block, object> backEdgeNodes = new Dictionary<Block, object>();
-          foreach (Block b in cce.NonNull(g.BackEdgeNodes(header)))
+          foreach (Block b in Cce.NonNull(g.BackEdgeNodes(header)))
           {
             Contract.Assert(b != null);
             backEdgeNodes.Add(b, null);
@@ -1121,7 +1121,7 @@ namespace VC
 
           for (int predIndex = 0, n = header.Predecessors.Count(); predIndex < n; predIndex++)
           {
-            Block pred = cce.NonNull(header.Predecessors[predIndex]);
+            Block pred = Cce.NonNull(header.Predecessors[predIndex]);
             if (!backEdgeNodes.ContainsKey(pred))
             {
               GotoCmd gc = pred.TransferCmd as GotoCmd;
@@ -1160,7 +1160,7 @@ namespace VC
 
       #region create copies of all blocks in the loop
 
-      foreach (Block backEdgeNode in cce.NonNull(g.BackEdgeNodes(header)))
+      foreach (Block backEdgeNode in Cce.NonNull(g.BackEdgeNodes(header)))
       {
         Contract.Assert(backEdgeNode != null);
         foreach (Block b in g.NaturalLoops(header, backEdgeNode))
@@ -1906,7 +1906,7 @@ namespace VC
       Contract.Requires(traceNodes != null);
       Contract.Requires(trace != null);
       Contract.Requires(context != null);
-      Contract.Requires(cce.NonNullDictionaryAndValues(calleeCounterexamples));
+      Contract.Requires(Cce.NonNullDictionaryAndValues(calleeCounterexamples));
       // After translation, all potential errors come from asserts.
 
       List<object> augmentedTrace = new List<object>();
@@ -1914,10 +1914,10 @@ namespace VC
       {
         List<Cmd> cmds = b.Cmds;
         Contract.Assert(cmds != null);
-        TransferCmd transferCmd = cce.NonNull(b.TransferCmd);
+        TransferCmd transferCmd = Cce.NonNull(b.TransferCmd);
         for (int i = 0; i < cmds.Count; i++)
         {
-          Cmd cmd = cce.NonNull(cmds[i]);
+          Cmd cmd = Cce.NonNull(cmds[i]);
 
           // update augmentedTrace
           if (errModel != null && debugInfos != null && debugInfos.ContainsKey(cmd))
@@ -1944,7 +1944,7 @@ namespace VC
         }
 
         Block foundBlock = null;
-        foreach (Block bb in cce.NonNull(gotoCmd.labelTargets))
+        foreach (Block bb in Cce.NonNull(gotoCmd.labelTargets))
         {
           Contract.Assert(bb != null);
           if (traceNodes.Contains(bb))
@@ -2242,7 +2242,7 @@ namespace VC
       GotoCmd gotocmd = block.TransferCmd as GotoCmd;
       if (gotocmd != null)
       {
-        foreach (Block successor in cce.NonNull(gotocmd.labelTargets))
+        foreach (Block successor in Cce.NonNull(gotocmd.labelTargets))
         {
           Contract.Assert(successor != null);
           VCExpr c = DagVC(successor, controlFlowVariableExpr, absyIds, blockEquations, proverCtxt, out var ac);

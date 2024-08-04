@@ -294,7 +294,7 @@ namespace Microsoft.Boogie
         string lam_str = sw.ToString();
 
         IToken tok = lambda.tok;
-        Formal res = new Formal(tok, new TypedIdent(tok, TypedIdent.NoName, cce.NonNull(lambda.Type)), false);
+        Formal res = new Formal(tok, new TypedIdent(tok, TypedIdent.NoName, Cce.NonNull(lambda.Type)), false);
 
         if (liftedLambdas.TryGetValue(lambda, out var fcall))
         {

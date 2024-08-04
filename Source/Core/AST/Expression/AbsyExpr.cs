@@ -135,7 +135,7 @@ namespace Microsoft.Boogie
       // The reason for mentioning the method here at all is to give TypeCheck a postcondition for all expressions.
       {
         Contract.Assert(false);
-        throw new cce.UnreachableException();
+        throw new Cce.UnreachableException();
       }
     }
 
@@ -289,14 +289,14 @@ namespace Microsoft.Boogie
           UnaryOperator op = (UnaryOperator) nary.Fun;
           if (op.Op == UnaryOperator.Opcode.Not)
           {
-            return cce.NonNull(nary.Args[0]);
+            return Cce.NonNull(nary.Args[0]);
           }
         }
         else if (nary.Fun is BinaryOperator)
         {
           BinaryOperator op = (BinaryOperator) nary.Fun;
-          Expr arg0 = cce.NonNull(nary.Args[0]);
-          Expr arg1 = cce.NonNull(nary.Args[1]);
+          Expr arg0 = Cce.NonNull(nary.Args[0]);
+          Expr arg1 = Cce.NonNull(nary.Args[1]);
           if (op.Op == BinaryOperator.Opcode.Eq)
           {
             return Neq(arg0, arg1);
@@ -508,7 +508,7 @@ namespace Microsoft.Boogie
     public static NAryExpr Select(Expr map, List<Expr /*!*/> /*!*/ args)
     {
       Contract.Requires(map != null);
-      Contract.Requires(cce.NonNullElements(args));
+      Contract.Requires(Cce.NonNullElements(args));
       Contract.Ensures(Contract.Result<NAryExpr>() != null);
       return Select(map, args.ToArray());
     }
@@ -545,7 +545,7 @@ namespace Microsoft.Boogie
     {
       Contract.Requires(rhs != null);
       Contract.Requires(map != null);
-      Contract.Requires(cce.NonNullElements(indexes));
+      Contract.Requires(Cce.NonNullElements(indexes));
       Contract.Ensures(Contract.Result<NAryExpr>() != null);
       Expr[] /*!*/
         allArgs = new Expr[indexes.Count + 1];
@@ -886,11 +886,11 @@ namespace Microsoft.Boogie
       }
       else if (Type.IsString)
       {
-        stream.Write("\"" + cce.NonNull(this.Val.ToString()) + "\"");
+        stream.Write("\"" + Cce.NonNull(this.Val.ToString()) + "\"");
       }
       else
       {
-        stream.Write(cce.NonNull(this.Val.ToString()));
+        stream.Write(Cce.NonNull(this.Val.ToString()));
       }
     }
 
@@ -951,7 +951,7 @@ namespace Microsoft.Boogie
         {
           {
             Contract.Assert(false);
-            throw new cce.UnreachableException();
+            throw new Cce.UnreachableException();
           } // like, where did this value come from?!
         }
       }
@@ -983,7 +983,7 @@ namespace Microsoft.Boogie
       get
       {
         Contract.Assert(isBigNum);
-        return (BigNum) cce.NonNull(Val);
+        return (BigNum) Cce.NonNull(Val);
       }
     }
 
@@ -1002,7 +1002,7 @@ namespace Microsoft.Boogie
       get
       {
         Contract.Assert(isBigDec);
-        return (BigDec) cce.NonNull(Val);
+        return (BigDec) Cce.NonNull(Val);
       }
     }
 
@@ -1011,7 +1011,7 @@ namespace Microsoft.Boogie
       get
       {
         Contract.Assert(isBigFloat);
-        return (BigFloat) cce.NonNull(Val);
+        return (BigFloat) Cce.NonNull(Val);
       }
     }
 
@@ -1025,7 +1025,7 @@ namespace Microsoft.Boogie
       get
       {
         Contract.Assert(isBool);
-        return (bool) cce.NonNull(Val);
+        return (bool) Cce.NonNull(Val);
       }
     }
 
@@ -1039,7 +1039,7 @@ namespace Microsoft.Boogie
       get
       {
         Contract.Assert(isBvConst);
-        return (BvConst) cce.NonNull(Val);
+        return (BvConst) Cce.NonNull(Val);
       }
     }
 
@@ -1053,7 +1053,7 @@ namespace Microsoft.Boogie
       get
       {
         Contract.Assert(isRoundingMode);
-        return (RoundingMode) cce.NonNull(Val);
+        return (RoundingMode) Cce.NonNull(Val);
       }
     }
 
@@ -1067,7 +1067,7 @@ namespace Microsoft.Boogie
       get
       {
         Contract.Assert(isString);
-        return (String) cce.NonNull(Val);
+        return (String) Cce.NonNull(Val);
       }
     }
 
@@ -1104,7 +1104,7 @@ namespace Microsoft.Boogie
       Contract.Ensures(Contract.Result<string>() != null);
       if (Value > BigNum.FromInt(10000))
       {
-        string val = cce.NonNull(Value.ToString("x"));
+        string val = Cce.NonNull(Value.ToString("x"));
         int pos = val.Length % 4;
         string res = "0x" + val.Substring(0, pos);
         Contract.Assert(res != null);
@@ -1233,7 +1233,7 @@ namespace Microsoft.Boogie
     {
       Contract.Requires(tok != null);
       Contract.Requires(d != null);
-      _Name = cce.NonNull(d.Name);
+      _Name = Cce.NonNull(d.Name);
       _Decl = d;
       Type = d.TypedIdent.Type;
       if (immutable)
@@ -1340,7 +1340,7 @@ namespace Microsoft.Boogie
             Name, Type, Decl.TypedIdent.Type);
           {
             Contract.Assert(false);
-            throw new cce.UnreachableException();
+            throw new Cce.UnreachableException();
           }
         }
 
@@ -1443,7 +1443,7 @@ namespace Microsoft.Boogie
       }
 
       private static IList /*!*/
-        emptyArgs = ArrayList.ReadOnly(cce.NonNull((IList /*!*/) new ArrayList()));
+        emptyArgs = ArrayList.ReadOnly(Cce.NonNull((IList /*!*/) new ArrayList()));
 
       public IList /*!*/ Arguments
       {
@@ -1917,7 +1917,7 @@ namespace Microsoft.Boogie
       }
 
       stream.Write(FunctionName);
-      cce.NonNull(args[0]).Emit(stream, opBindingStrength, false);
+      Cce.NonNull(args[0]).Emit(stream, opBindingStrength, false);
       if (parensNeeded)
       {
         stream.Write(")");
@@ -1948,7 +1948,7 @@ namespace Microsoft.Boogie
 
       Contract.Assume(args.Count == 1);
       tpInstantiation = SimpleTypeParamInstantiation.EMPTY;
-      Type arg0type = cce.NonNull(cce.NonNull(args[0]).Type);
+      Type arg0type = Cce.NonNull(Cce.NonNull(args[0]).Type);
       switch (this.op)
       {
         case Opcode.Neg:
@@ -1978,7 +1978,7 @@ namespace Microsoft.Boogie
       System.Diagnostics.Debug.Fail("unknown unary operator: " + op.ToString());
       {
         Contract.Assert(false);
-        throw new cce.UnreachableException();
+        throw new Cce.UnreachableException();
       }
       BAD_TYPE:
       tc.Error(this.tok, "invalid argument type ({1}) to unary operator {0}",
@@ -1993,13 +1993,13 @@ namespace Microsoft.Boogie
       switch (this.op)
       {
         case Opcode.Neg:
-          return cce.NonNull(cce.NonNull(args[0]).Type);
+          return Cce.NonNull(Cce.NonNull(args[0]).Type);
         case Opcode.Not:
           return Type.Bool;
         default:
         {
           Contract.Assert(false);
-          throw new cce.UnreachableException();
+          throw new Cce.UnreachableException();
         } // unexpected unary operator
       }
     }
@@ -2249,10 +2249,10 @@ namespace Microsoft.Boogie
         stream.Write("(");
       }
 
-      cce.NonNull(args[0]).Emit(stream, opBindingStrength, fragileLeftContext);
+      Cce.NonNull(args[0]).Emit(stream, opBindingStrength, fragileLeftContext);
       stream.sep();
       stream.Write(" {0} ", FunctionName);
-      cce.NonNull(args[1]).Emit(stream, opBindingStrength, fragileRightContext);
+      Cce.NonNull(args[1]).Emit(stream, opBindingStrength, fragileRightContext);
       if (parensNeeded)
       {
         stream.Write(")");
@@ -2319,10 +2319,10 @@ namespace Microsoft.Boogie
       // the default; the only binary operator with a type parameter is equality, but right
       // we don't store this parameter because it does not appear necessary
       tpInstantiation = SimpleTypeParamInstantiation.EMPTY;
-      Expr arg0 = cce.NonNull(args[0]);
-      Expr arg1 = cce.NonNull(args[1]);
-      Type arg0type = cce.NonNull(arg0.Type);
-      Type arg1type = cce.NonNull(arg1.Type);
+      Expr arg0 = Cce.NonNull(args[0]);
+      Expr arg1 = Cce.NonNull(args[1]);
+      Type arg0type = Cce.NonNull(arg0.Type);
+      Type arg1type = Cce.NonNull(arg1.Type);
       switch (this.op)
       {
         case Opcode.Add:
@@ -2443,7 +2443,7 @@ namespace Microsoft.Boogie
       System.Diagnostics.Debug.Fail("unknown binary operator: " + op.ToString());
       {
         Contract.Assert(false);
-        throw new cce.UnreachableException();
+        throw new Cce.UnreachableException();
       }
       BAD_TYPE:
       tc.Error(this.tok, "invalid argument types ({1} and {2}) to binary operator {0}", this.FunctionName, arg0type,
@@ -2460,7 +2460,7 @@ namespace Microsoft.Boogie
         case Opcode.Add:
         case Opcode.Sub:
         case Opcode.Mul:
-          return cce.NonNull(args[0]).ShallowType;
+          return Cce.NonNull(args[0]).ShallowType;
 
         case Opcode.Div:
         case Opcode.Mod:
@@ -2485,7 +2485,7 @@ namespace Microsoft.Boogie
         default:
         {
           Contract.Assert(false);
-          throw new cce.UnreachableException();
+          throw new Cce.UnreachableException();
         } // unexpected binary operator
       }
     }
@@ -2500,8 +2500,8 @@ namespace Microsoft.Boogie
         return;
       }
 
-      Expr arg0 = cce.NonNull(expr.Args[0]);
-      Expr arg1 = cce.NonNull(expr.Args[1]);
+      Expr arg0 = Cce.NonNull(expr.Args[0]);
+      Expr arg1 = Cce.NonNull(expr.Args[1]);
       switch (op)
       {
         case Opcode.Eq:
@@ -2795,7 +2795,7 @@ namespace Microsoft.Boogie
         stream.Write("(");
       }
 
-      cce.NonNull(args[0]).Emit(stream, opBindingStrength, false);
+      Cce.NonNull(args[0]).Emit(stream, opBindingStrength, false);
       stream.Write("{0} ", FunctionName);
       Type.Emit(stream, 0);
 
@@ -2830,10 +2830,10 @@ namespace Microsoft.Boogie
       Contract.Assume(args.Count == 1);
       tpInstantiation = SimpleTypeParamInstantiation.EMPTY;
 
-      if (!this.Type.Unify(cce.NonNull(cce.NonNull(args[0]).Type)))
+      if (!this.Type.Unify(Cce.NonNull(Cce.NonNull(args[0]).Type)))
       {
         tc.Error(this.tok, "{0} cannot be coerced to {1}",
-          cce.NonNull(args[0]).Type, this.Type);
+          Cce.NonNull(args[0]).Type, this.Type);
       }
 
       return this.Type;
@@ -2953,9 +2953,9 @@ namespace Microsoft.Boogie
 
       tpInstantiation = SimpleTypeParamInstantiation.EMPTY;
 
-      if (!cce.NonNull(cce.NonNull(args[0]).Type).Unify(argType))
+      if (!Cce.NonNull(Cce.NonNull(args[0]).Type).Unify(argType))
       {
-        tc.Error(this.tok, "argument type {0} does not match expected type {1}", cce.NonNull(args[0]).Type,
+        tc.Error(this.tok, "argument type {0} does not match expected type {1}", Cce.NonNull(args[0]).Type,
           this.argType);
       }
 
@@ -3050,7 +3050,7 @@ namespace Microsoft.Boogie
         stream.Write("(");
       }
 
-      cce.NonNull(args[0]).Emit(stream, opBindingStrength, false);
+      Cce.NonNull(args[0]).Emit(stream, opBindingStrength, false);
       stream.Write("[");
 
       string sep = "";
@@ -3059,13 +3059,13 @@ namespace Microsoft.Boogie
       {
         stream.Write(sep);
         sep = ", ";
-        cce.NonNull(args[i]).Emit(stream);
+        Cce.NonNull(args[i]).Emit(stream);
       }
 
       if (withRhs)
       {
         stream.Write(" := ");
-        cce.NonNull(args.Last()).Emit(stream);
+        Cce.NonNull(args.Last()).Emit(stream);
       }
 
       stream.Write("]");
@@ -3157,7 +3157,7 @@ namespace Microsoft.Boogie
         actualArgs.Add(args[i]);
       }
 
-      return Typecheck(cce.NonNull(cce.NonNull(args[0]).Type), cce.NonNull(args[0]),
+      return Typecheck(Cce.NonNull(Cce.NonNull(args[0]).Type), Cce.NonNull(args[0]),
         actualArgs, out tpInstantiation, tc, this.tok, "map select");
     }
 
@@ -3168,7 +3168,7 @@ namespace Microsoft.Boogie
     {
       //Contract.Requires(args != null);
       Contract.Ensures(Contract.Result<Type>() != null);
-      Expr a0 = cce.NonNull(args[0]);
+      Expr a0 = Cce.NonNull(args[0]);
       Type a0Type = a0.ShallowType;
       if (a0Type == null || !a0Type.IsMap)
       {
@@ -3180,7 +3180,7 @@ namespace Microsoft.Boogie
       List<Type> actualArgTypes = new List<Type>();
       for (int i = 1; i < args.Count; ++i)
       {
-        actualArgTypes.Add(cce.NonNull(args[i]).ShallowType);
+        actualArgTypes.Add(Cce.NonNull(args[i]).ShallowType);
       }
 
       return Type.InferValueType(mapType.TypeParameters, mapType.Arguments, mapType.Result, actualArgTypes);
@@ -3284,7 +3284,7 @@ namespace Microsoft.Boogie
       }
 
       Type resultType =
-        MapSelect.Typecheck(cce.NonNull(cce.NonNull(args[0]).Type), cce.NonNull(args[0]),
+        MapSelect.Typecheck(Cce.NonNull(Cce.NonNull(args[0]).Type), Cce.NonNull(args[0]),
           selectArgs, out tpInstantiation, tc, typeCheckingSubject, opName);
 
       // check the the rhs has the right type
@@ -3294,16 +3294,16 @@ namespace Microsoft.Boogie
         return null;
       }
 
-      Type rhsType = cce.NonNull(cce.NonNull(args.Last()).Type);
+      Type rhsType = Cce.NonNull(Cce.NonNull(args.Last()).Type);
       if (!resultType.Unify(rhsType))
       {
-        tc.Error(cce.NonNull(args.Last()).tok,
+        tc.Error(Cce.NonNull(args.Last()).tok,
           "right-hand side in {0} with wrong type: {1} (expected: {2})",
           opName, rhsType, resultType);
         return null;
       }
 
-      return cce.NonNull(args[0]).Type;
+      return Cce.NonNull(args[0]).Type;
     }
 
     public Type Typecheck(IList<Expr> /*!*/ args,
@@ -3325,7 +3325,7 @@ namespace Microsoft.Boogie
     {
       //Contract.Requires(args != null);
       Contract.Ensures(Contract.Result<Type>() != null);
-      return cce.NonNull(args[0]).ShallowType;
+      return Cce.NonNull(args[0]).ShallowType;
     }
 
     public T Dispatch<T>(IAppliableVisitor<T> visitor)
@@ -3403,13 +3403,13 @@ namespace Microsoft.Boogie
       Contract.Assert(args.Count == 3);
       stream.push();
       stream.Write("(if ");
-      cce.NonNull(args[0]).Emit(stream, 0x00, false);
+      Cce.NonNull(args[0]).Emit(stream, 0x00, false);
       stream.sep();
       stream.Write(" then ");
-      cce.NonNull(args[1]).Emit(stream, 0x00, false);
+      Cce.NonNull(args[1]).Emit(stream, 0x00, false);
       stream.sep();
       stream.Write(" else ");
-      cce.NonNull(args[2]).Emit(stream, 0x00, false);
+      Cce.NonNull(args[2]).Emit(stream, 0x00, false);
       stream.Write(")");
       stream.pop();
     }
@@ -3436,15 +3436,15 @@ namespace Microsoft.Boogie
       // the default; the only binary operator with a type parameter is equality, but right
       // we don't store this parameter because it does not appear necessary
       tpInstantiation = SimpleTypeParamInstantiation.EMPTY;
-      Expr arg0 = cce.NonNull(args[0]);
-      Expr arg1 = cce.NonNull(args[1]);
-      Expr arg2 = cce.NonNull(args[2]);
+      Expr arg0 = Cce.NonNull(args[0]);
+      Expr arg1 = Cce.NonNull(args[1]);
+      Expr arg2 = Cce.NonNull(args[2]);
 
-      if (!cce.NonNull(arg0.Type).Unify(Type.Bool))
+      if (!Cce.NonNull(arg0.Type).Unify(Type.Bool))
       {
         tc.Error(this.tok, "the first argument to if-then-else should be bool, not {0}", arg0.Type);
       }
-      else if (!cce.NonNull(arg1.Type).Unify(cce.NonNull(arg2.Type)))
+      else if (!Cce.NonNull(arg1.Type).Unify(Cce.NonNull(arg2.Type)))
       {
         tc.Error(this.tok, "branches of if-then-else have incompatible types {0} and {1}", arg1.Type, arg2.Type);
       }
@@ -3463,7 +3463,7 @@ namespace Microsoft.Boogie
     {
       //Contract.Requires(args != null);
       Contract.Ensures(Contract.Result<Type>() != null);
-      return cce.NonNull(args[1]).ShallowType;
+      return Cce.NonNull(args[1]).ShallowType;
     }
 
     public T Dispatch<T>(IAppliableVisitor<T> visitor)
@@ -3544,7 +3544,7 @@ namespace Microsoft.Boogie
       {
         stream.Write("(");
       }
-      cce.NonNull(args[0]).Emit(stream, opBindingStrength, false);
+      Cce.NonNull(args[0]).Emit(stream, opBindingStrength, false);
       stream.Write("->{0}", FieldName);
       if (parensNeeded)
       {
@@ -3563,7 +3563,7 @@ namespace Microsoft.Boogie
     public Type Typecheck(IList<Expr> args, out TypeParamInstantiation tpInstantiation, TypecheckingContext tc)
     {
       Contract.Assert(args.Count == 1);
-      return Typecheck(cce.NonNull(args[0]).Type, tc, out tpInstantiation);
+      return Typecheck(Cce.NonNull(args[0]).Type, tc, out tpInstantiation);
     }
     
     public Type Typecheck(Type type, TypecheckingContext tc, out TypeParamInstantiation tpInstantiation)
@@ -3714,9 +3714,9 @@ namespace Microsoft.Boogie
       {
         stream.Write("(");
       }
-      cce.NonNull(args[0]).Emit(stream, opBindingStrength, false);
+      Cce.NonNull(args[0]).Emit(stream, opBindingStrength, false);
       stream.Write("->({0} := ", fieldAccess.FieldName);
-      cce.NonNull(args[1]).Emit(stream, opBindingStrength, false);
+      Cce.NonNull(args[1]).Emit(stream, opBindingStrength, false);
       stream.Write(")");
       if (parensNeeded)
       {
@@ -3735,7 +3735,7 @@ namespace Microsoft.Boogie
     public Type Typecheck(IList<Expr> args, out TypeParamInstantiation tpInstantiation, TypecheckingContext tc)
     {
       Contract.Assert(args.Count == 2);
-      return Typecheck(cce.NonNull(args[0]).Type, cce.NonNull(args[1]).Type, tc, out tpInstantiation);
+      return Typecheck(Cce.NonNull(args[0]).Type, Cce.NonNull(args[1]).Type, tc, out tpInstantiation);
     }
     
     public Type Typecheck(Type datatype, Type fieldType, TypecheckingContext tc, out TypeParamInstantiation tpInstantiation)
@@ -3826,7 +3826,7 @@ namespace Microsoft.Boogie
       {
         stream.Write("(");
       }
-      cce.NonNull(args[0]).Emit(stream, opBindingStrength, false);
+      Cce.NonNull(args[0]).Emit(stream, opBindingStrength, false);
       stream.Write(" is {0}", ConstructorName);
       if (parensNeeded)
       {
@@ -3845,7 +3845,7 @@ namespace Microsoft.Boogie
     public Type Typecheck(IList<Expr> args, out TypeParamInstantiation tpInstantiation, TypecheckingContext tc)
     {
       Contract.Assert(args.Count == 1);
-      return Typecheck(cce.NonNull(args[0]).Type, tc, out tpInstantiation);
+      return Typecheck(Cce.NonNull(args[0]).Type, tc, out tpInstantiation);
     }
     
     public Type Typecheck(Type type, TypecheckingContext tc, out TypeParamInstantiation tpInstantiation)
@@ -3896,14 +3896,14 @@ namespace Microsoft.Boogie
     void ObjectInvariant()
     {
       Contract.Invariant(LocVars != null);
-      Contract.Invariant(cce.NonNullElements(Blocks));
+      Contract.Invariant(Cce.NonNullElements(Blocks));
     }
 
     public CodeExpr(List<Variable> /*!*/ localVariables, List<Block /*!*/> /*!*/ blocks, bool immutable = false)
       : base(Token.NoToken, immutable)
     {
       Contract.Requires(localVariables != null);
-      Contract.Requires(cce.NonNullElements(blocks));
+      Contract.Requires(Cce.NonNullElements(blocks));
       Contract.Requires(0 < blocks.Count);
       LocVars = localVariables;
       Blocks = blocks;

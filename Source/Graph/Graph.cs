@@ -472,7 +472,7 @@ namespace Microsoft.Boogie.GraphUtil
 
     public Graph(HashSet<Tuple<Node /*!*/, Node /*!*/>> edges)
     {
-      Contract.Requires(cce.NonNullElements(edges) && Contract.ForAll(edges, p => p.Item1 != null && p.Item2 != null));
+      Contract.Requires(Cce.NonNullElements(edges) && Contract.ForAll(edges, p => p.Item1 != null && p.Item2 != null));
       this.edges = edges;
 
       // original A#
@@ -537,7 +537,7 @@ namespace Microsoft.Boogie.GraphUtil
     {
       get
       {
-        Contract.Ensures(cce.NonNullElements(Contract.Result<IEnumerable<Tuple<Node, Node>>>())
+        Contract.Ensures(Cce.NonNullElements(Contract.Result<IEnumerable<Tuple<Node, Node>>>())
                          && Contract.ForAll(Contract.Result<IEnumerable<Tuple<Node, Node>>>(), n =>
                            n.Item1 != null && n.Item2 != null));
         return edges;
@@ -1454,7 +1454,7 @@ namespace Microsoft.Boogie.GraphUtil
 
     private ICollection<Node> /*!*/ nodes
     {
-      get { return cce.NonNull(nodesMap.Keys); }
+      get { return Cce.NonNull(nodesMap.Keys); }
     }
 
     [Pure]
@@ -1581,7 +1581,7 @@ namespace Microsoft.Boogie.GraphUtil
       Contract.Ensures(Contract.Result<IEnumerator<SCC<Node>>>() != null);
 
       Contract.Assume(Computed);
-      Contract.Assert(cce.NonNullElements((IEnumerable<SCC<Node> /*!*/>) sccs)); //REVIEW
+      Contract.Assert(Cce.NonNullElements((IEnumerable<SCC<Node> /*!*/>) sccs)); //REVIEW
       return ((IEnumerable<SCC<Node> /*!*/>) sccs).GetEnumerator();
     }
 
@@ -1591,7 +1591,7 @@ namespace Microsoft.Boogie.GraphUtil
     [ContractInvariantMethod]
     void sccsInvariant()
     {
-      Contract.Invariant(cce.NonNullElements(sccs));
+      Contract.Invariant(Cce.NonNullElements(sccs));
     }
 
 
@@ -1601,7 +1601,7 @@ namespace Microsoft.Boogie.GraphUtil
       Contract.Ensures(Computed);
       // Compute post times on graph with edges reversed
       this.dfsNext = this.preds;
-      foreach (Node /*!*/ n in cce.NonNull(graph.Keys))
+      foreach (Node /*!*/ n in Cce.NonNull(graph.Keys))
       {
         Contract.Assert(n != null);
         if (!seen.ContainsKey(n))
@@ -1649,7 +1649,7 @@ namespace Microsoft.Boogie.GraphUtil
     void ObjectInvariant()
     {
       Contract.Invariant(seen != null);
-      Contract.Invariant(cce.NonNullElements(postOrder));
+      Contract.Invariant(Cce.NonNullElements(postOrder));
     }
 
 

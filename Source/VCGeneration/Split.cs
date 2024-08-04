@@ -83,7 +83,7 @@ namespace VC
         Dictionary<TransferCmd, ReturnCmd> /*!*/ gotoCmdOrigins,
         VerificationConditionGenerator /*!*/ par, ImplementationRun run, int? randomSeed = null)
       {
-        Contract.Requires(cce.NonNullElements(blocks));
+        Contract.Requires(Cce.NonNullElements(blocks));
         Contract.Requires(gotoCmdOrigins != null);
         Contract.Requires(par != null);
         this.Blocks = blocks;
@@ -223,7 +223,7 @@ namespace VC
           stats[b] = s;
         }
 
-        return cce.NonNull(s);
+        return Cce.NonNull(s);
       }
 
       double AssertionCost(PredicateCmd c)
@@ -284,7 +284,7 @@ namespace VC
       HashSet<Block /*!*/> /*!*/ ComputeReachableNodes(Block /*!*/ b)
       {
         Contract.Requires(b != null);
-        Contract.Ensures(cce.NonNull(Contract.Result<HashSet<Block /*!*/>>()));
+        Contract.Ensures(Cce.NonNull(Contract.Result<HashSet<Block /*!*/>>()));
         BlockStats s = GetBlockStats(b);
         if (s.reachableBlocks != null)
         {
@@ -345,7 +345,7 @@ namespace VC
                 Options.OutputWriter.WriteLine("non-big {0} accessed from {1}", ch, b);
                 DumpDot(-1);
                 Contract.Assert(false);
-                throw new cce.UnreachableException();
+                throw new Cce.UnreachableException();
               }
 
               chs.virtualPredecessors.Add(b);
@@ -369,7 +369,7 @@ namespace VC
             continue;
           }
 
-          List<Block> targ = cce.NonNull(gt.labelTargets);
+          List<Block> targ = Cce.NonNull(gt.labelTargets);
           if (targ.Count < 2)
           {
             continue;
@@ -380,14 +380,14 @@ namespace VC
           splitBlock = b;
 
           assumizedBranches.Clear();
-          assumizedBranches.Add(cce.NonNull(targ[0]));
+          assumizedBranches.Add(Cce.NonNull(targ[0]));
           left0 = DoComputeScore(true);
           right0 = DoComputeScore(false);
 
           assumizedBranches.Clear();
           for (int idx = 1; idx < targ.Count; idx++)
           {
-            assumizedBranches.Add(cce.NonNull(targ[idx]));
+            assumizedBranches.Add(Cce.NonNull(targ[idx]));
           }
 
           left1 = DoComputeScore(true);
@@ -400,7 +400,7 @@ namespace VC
           {
             currentScore = otherScore;
             assumizedBranches.Clear();
-            assumizedBranches.Add(cce.NonNull(targ[0]));
+            assumizedBranches.Add(Cce.NonNull(targ[0]));
           }
 
           if (currentScore < score)
@@ -507,7 +507,7 @@ namespace VC
           foreach (Block b in allowSmall ? Blocks : bigBlocks)
           {
             Contract.Assert(b != null);
-            if (ComputeReachableNodes(b).Contains(cce.NonNull(splitBlock)))
+            if (ComputeReachableNodes(b).Contains(Cce.NonNull(splitBlock)))
             {
               keepAtAll.Add(b);
             }
@@ -613,7 +613,7 @@ namespace VC
             else
             {
               Contract.Assert(false);
-              throw new cce.UnreachableException();
+              throw new Cce.UnreachableException();
             }
 
             if (swap)
@@ -635,7 +635,7 @@ namespace VC
 
         if (copies.TryGetValue(b, out var res))
         {
-          return cce.NonNull(res);
+          return Cce.NonNull(res);
         }
 
         res = new Block(b.tok, b.Label, SliceCmds(b), b.TransferCmd);
@@ -646,7 +646,7 @@ namespace VC
           GotoCmd newGoto = new GotoCmd(gt.tok, new List<String>(), new List<Block>());
           res.TransferCmd = newGoto;
           int pos = 0;
-          foreach (Block ch in cce.NonNull(gt.labelTargets))
+          foreach (Block ch in Cce.NonNull(gt.labelTargets))
           {
             Contract.Assert(ch != null);
             Contract.Assert(doingSlice ||
@@ -681,7 +681,7 @@ namespace VC
             continue;
           }
 
-          newBlocks.Add(cce.NonNull(tmp));
+          newBlocks.Add(Cce.NonNull(tmp));
           if (GotoCmdOrigins.TryGetValue(block.TransferCmd, out var origin))
           {
             newGotoCmdOrigins[tmp.TransferCmd] = origin;
@@ -756,7 +756,7 @@ namespace VC
             if (command is AssertCmd assertCmd)
             {
               var counterexample = VerificationConditionGenerator.AssertCmdToCounterexample(Options, assertCmd,
-                cce.NonNull(block.TransferCmd), trace, null, null, null, context, this);
+                Cce.NonNull(block.TransferCmd), trace, null, null, null, context, this);
               Counterexamples.Add(counterexample);
               return counterexample;
             }
@@ -764,13 +764,13 @@ namespace VC
         }
 
         Contract.Assume(false);
-        throw new cce.UnreachableException();
+        throw new Cce.UnreachableException();
       }
 
       public static List<Split /*!*/> /*!*/ DoSplit(Split initial, double splitThreshold, int maxSplits)
       {
         Contract.Requires(initial != null);
-        Contract.Ensures(cce.NonNullElements(Contract.Result<List<Split>>()));
+        Contract.Ensures(Cce.NonNullElements(Contract.Result<List<Split>>()));
 
         var run = initial.Run;
         var result = new List<Split> { initial };
@@ -813,7 +813,7 @@ namespace VC
               if (g != null)
               {
                 run.OutputWriter.Write("    exits: ");
-                foreach (Block b in cce.NonNull(g.labelTargets))
+                foreach (Block b in Cce.NonNull(g.labelTargets))
                 {
                   Contract.Assert(b != null);
                   run.OutputWriter.Write("{0} ", b.Label);
@@ -862,7 +862,7 @@ namespace VC
               s0.DumpDot(-2);
               s1.DumpDot(-3);
               Contract.Assert(false);
-              throw new cce.UnreachableException();
+              throw new Cce.UnreachableException();
             }
           }
 
@@ -889,7 +889,7 @@ namespace VC
       public VerificationRunResult ReadOutcome(int iteration, Checker checker, VerifierCallback callback)
       {
         Contract.EnsuresOnThrow<UnexpectedProverOutputException>(true);
-        SolverOutcome outcome = cce.NonNull(checker).ReadOutcome();
+        SolverOutcome outcome = Cce.NonNull(checker).ReadOutcome();
 
         if (Options.Trace && SplitIndex >= 0)
         {
@@ -987,7 +987,7 @@ namespace VC
       {
         get
         {
-          string description = cce.NonNull(Implementation.Name);
+          string description = Cce.NonNull(Implementation.Name);
           if (SplitIndex >= 0)
           {
             description += "_split" + SplitIndex;
@@ -1000,7 +1000,7 @@ namespace VC
       private void SoundnessCheck(HashSet<List<Block> /*!*/> /*!*/ cache, Block /*!*/ orig,
         List<Block /*!*/> /*!*/ copies)
       {
-        Contract.Requires(cce.NonNull(cache));
+        Contract.Requires(Cce.NonNull(cache));
         Contract.Requires(orig != null);
         Contract.Requires(copies != null);
         {

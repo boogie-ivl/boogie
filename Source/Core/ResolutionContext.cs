@@ -133,7 +133,7 @@ namespace Microsoft.Boogie
     void ObjectInvariant()
     {
       Contract.Invariant(types != null);
-      Contract.Invariant(cce.NonNullElements(typeBinders));
+      Contract.Invariant(Cce.NonNullElements(typeBinders));
       Contract.Invariant(varContext != null);
       Contract.Invariant(functions != null);
       Contract.Invariant(procedures != null);
@@ -382,7 +382,7 @@ namespace Microsoft.Boogie
     public void AddVariable(Variable var)
     {
       Contract.Requires(var != null);
-      var previous = FindVariable(cce.NonNull(var.Name), true);
+      var previous = FindVariable(Cce.NonNull(var.Name), true);
       if (previous == null)
       {
         varContext.VarSymbols.Add(var.Name, var);
@@ -711,11 +711,11 @@ namespace Microsoft.Boogie
       {
         Contract.Assert(value != stateMode);
         Contract.Assert(stateMode == State.Single || value == State.Single);
-        cce.BeginExpose(this);
+        Cce.BeginExpose(this);
         {
           stateMode = value;
         }
-        cce.EndExpose();
+        Cce.EndExpose();
       }
     }
 
@@ -732,11 +732,11 @@ namespace Microsoft.Boogie
       set
       {
         Contract.Assert(triggerMode != value);
-        cce.BeginExpose(this);
+        Cce.BeginExpose(this);
         {
           triggerMode = value;
         }
-        cce.EndExpose();
+        Cce.EndExpose();
       }
     }
 

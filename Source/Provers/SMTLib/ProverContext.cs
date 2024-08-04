@@ -136,8 +136,8 @@ namespace Microsoft.Boogie
       Contract.Invariant(gen != null);
       Contract.Invariant(genOptions != null);
       Contract.Invariant(translator != null);
-      Contract.Invariant(cce.NonNullElements(distincts));
-      Contract.Invariant(cce.NonNullElements(axiomConjuncts));
+      Contract.Invariant(Cce.NonNullElements(distincts));
+      Contract.Invariant(Cce.NonNullElements(axiomConjuncts));
     }
 
     public VCExprTranslator /*?*/
@@ -191,7 +191,7 @@ namespace Microsoft.Boogie
       }
       else
       {
-        exprTranslator = (VCExprTranslator) cce.NonNull(ctxt.exprTranslator.Clone());
+        exprTranslator = (VCExprTranslator) Cce.NonNull(ctxt.exprTranslator.Clone());
       }
     }
 

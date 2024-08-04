@@ -75,7 +75,7 @@ public static Program ParseLibrary(string libraryName)
 ///</summary>
 public static int Parse(string/*!*/ filename, List<string/*!*/> defines, out /*maybe null*/ Program program, bool useBaseName=false) /* throws System.IO.IOException */ {
   Contract.Requires(filename != null);
-  Contract.Requires(cce.NonNullElements(defines,true));
+  Contract.Requires(Cce.NonNullElements(defines,true));
 
   if (filename == "stdin.bpl") {
     return Parse(Console.In, filename, defines, out program, useBaseName);
@@ -96,7 +96,7 @@ public static int Parse(string s, string/*!*/ filename, out /*maybe null*/ Progr
   Contract.Requires(s != null);
   Contract.Requires(filename != null);
 
-  byte[]/*!*/ buffer = cce.NonNull(UTF8Encoding.Default.GetBytes(s));
+  byte[]/*!*/ buffer = Cce.NonNull(UTF8Encoding.Default.GetBytes(s));
   MemoryStream ms = new MemoryStream(buffer,false);
   Errors errors = new Errors();
   Scanner scanner = new Scanner(ms, errors, filename, useBaseName);
@@ -147,9 +147,9 @@ private class BvBounds : Expr {
   }
   public override void Emit(TokenTextWriter/*!*/ stream,
                             int contextBindingStrength, bool fragileContext) {
-    Contract.Assert(false);throw new cce.UnreachableException();
+    Contract.Assert(false);throw new Cce.UnreachableException();
   }
-  public override void ComputeFreeVariables(GSet<object>/*!*/ freeVars) { Contract.Assert(false);throw new cce.UnreachableException(); }
+  public override void ComputeFreeVariables(GSet<object>/*!*/ freeVars) { Contract.Assert(false);throw new Cce.UnreachableException(); }
 
   public override int ContentHash => throw new NotSupportedException("Not supported since this type is translated away");
 
@@ -471,7 +471,7 @@ private class BvBounds : Expr {
 		if (!allUnnamed) {
 		 Bpl.Type prevType = null;
 		 for (int i = arguments.Count; 0 <= --i; ) {
-		   TypedIdent/*!*/ curr = cce.NonNull(arguments[i]).TypedIdent;
+		   TypedIdent/*!*/ curr = Cce.NonNull(arguments[i]).TypedIdent;
 		   if (curr.HasName) {
 		     // the argument was given as both an identifier and a type
 		     prevType = curr.Type;
@@ -530,7 +530,7 @@ private class BvBounds : Expr {
 	}
 
 	void UserDefinedTypes(out List<Declaration/*!*/>/*!*/ ts) {
-		Contract.Ensures(cce.NonNullElements(Contract.ValueAtReturn(out ts))); Declaration/*!*/ decl; QKeyValue kv = null; ts = new List<Declaration/*!*/> (); 
+		Contract.Ensures(Cce.NonNullElements(Contract.ValueAtReturn(out ts))); Declaration/*!*/ decl; QKeyValue kv = null; ts = new List<Declaration/*!*/> (); 
 		Expect(32);
 		while (la.kind == 26) {
 			Attribute(ref kv);
@@ -1511,7 +1511,7 @@ out List<Variable>/*!*/ ins, out List<Variable>/*!*/ outs, out QKeyValue kv) {
 	}
 
 	void StructuredCmd(out StructuredCmd/*!*/ ec) {
-		Contract.Ensures(Contract.ValueAtReturn(out ec) != null); ec = dummyStructuredCmd;  Contract.Assume(cce.IsPeerConsistent(ec));
+		Contract.Ensures(Contract.ValueAtReturn(out ec) != null); ec = dummyStructuredCmd;  Contract.Assume(Cce.IsPeerConsistent(ec));
 		IfCmd/*!*/ ifcmd;  WhileCmd/*!*/ wcmd;  BreakCmd/*!*/ bcmd;
 		
 		if (la.kind == 56) {
@@ -1584,7 +1584,7 @@ out List<Variable>/*!*/ ins, out List<Variable>/*!*/ outs, out QKeyValue kv) {
 		Expect(58);
 		x = t; 
 		Guard(out guard);
-		Contract.Assume(guard == null || cce.Owner.None(guard)); 
+		Contract.Assume(guard == null || Cce.Owner.None(guard)); 
 		while (la.kind == 35 || la.kind == 52) {
 			isFree = false; z = la/*lookahead token*/; 
 			if (la.kind == 52) {
@@ -1739,7 +1739,7 @@ out List<Variable>/*!*/ ins, out List<Variable>/*!*/ outs, out QKeyValue kv) {
 	}
 
 	void MapAssignIndex(out IToken/*!*/ x, out List<Expr/*!*/>/*!*/ indexes) {
-		Contract.Ensures(Contract.ValueAtReturn(out x) != null); Contract.Ensures(cce.NonNullElements(Contract.ValueAtReturn(out indexes))); indexes = new List<Expr/*!*/> ();
+		Contract.Ensures(Contract.ValueAtReturn(out x) != null); Contract.Ensures(Cce.NonNullElements(Contract.ValueAtReturn(out indexes))); indexes = new List<Expr/*!*/> ();
 		Expr/*!*/ e;
 		
 		Expect(19);
@@ -2529,7 +2529,7 @@ out QKeyValue kv, out Trigger trig, out Expr/*!*/ body) {
 	}
 
 	void CodeExpression(out List<Variable>/*!*/ locals, out List<Block/*!*/>/*!*/ blocks) {
-		Contract.Ensures(Contract.ValueAtReturn(out locals) != null); Contract.Ensures(cce.NonNullElements(Contract.ValueAtReturn(out blocks))); locals = new List<Variable>(); Block/*!*/ b;
+		Contract.Ensures(Contract.ValueAtReturn(out locals) != null); Contract.Ensures(Cce.NonNullElements(Contract.ValueAtReturn(out blocks))); locals = new List<Variable>(); Block/*!*/ b;
 		blocks = new List<Block/*!*/>();
 		
 		Expect(113);

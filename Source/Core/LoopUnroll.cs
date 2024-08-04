@@ -12,7 +12,7 @@ namespace Microsoft.Boogie
       Contract.Requires(start != null);
 
       Contract.Requires(0 <= unrollMaxDepth);
-      Contract.Ensures(cce.NonNullElements(Contract.Result<List<Block>>()));
+      Contract.Ensures(Cce.NonNullElements(Contract.Result<List<Block>>()));
       Dictionary<Block, GraphNode /*!*/> gd = new Dictionary<Block, GraphNode /*!*/>();
       HashSet<Block> beingVisited = new HashSet<Block>();
       GraphNode gStart = GraphNode.ComputeGraphInfo(null, start, gd, beingVisited);
@@ -88,9 +88,9 @@ namespace Microsoft.Boogie
       {
         Contract.Invariant(Block != null);
         Contract.Invariant(Body != null);
-        Contract.Invariant(cce.NonNullElements(ForwardEdges));
-        Contract.Invariant(cce.NonNullElements(BackEdges));
-        Contract.Invariant(cce.NonNullElements(Predecessors));
+        Contract.Invariant(Cce.NonNullElements(ForwardEdges));
+        Contract.Invariant(Cce.NonNullElements(BackEdges));
+        Contract.Invariant(Cce.NonNullElements(Predecessors));
         Contract.Invariant(isCutPoint == (BackEdges.Count != 0));
       }
 
@@ -143,7 +143,7 @@ namespace Microsoft.Boogie
       {
         Contract.Requires(beingVisited != null);
         Contract.Requires(b != null);
-        Contract.Requires(cce.NonNullDictionaryAndValues(gd));
+        Contract.Requires(Cce.NonNullDictionaryAndValues(gd));
         Contract.Ensures(Contract.Result<GraphNode>() != null);
         if (gd.TryGetValue(b, out var g))
         {
@@ -220,8 +220,8 @@ namespace Microsoft.Boogie
     void ObjectInvariant()
     {
       Contract.Invariant(head != null);
-      Contract.Invariant(cce.NonNullElements(newBlockSeqGlobal));
-      Contract.Invariant(newBlocks != null && cce.NonNullElements(newBlocks.Values));
+      Contract.Invariant(Cce.NonNullElements(newBlockSeqGlobal));
+      Contract.Invariant(newBlocks != null && Cce.NonNullElements(newBlocks.Values));
     }
 
 
@@ -230,9 +230,9 @@ namespace Microsoft.Boogie
       Dictionary<GraphNode /*!*/, SCC<GraphNode /*!*/>> /*!*/ scc, List<Block /*!*/> /*!*/ newBlockSeqGlobal)
       : base()
     {
-      Contract.Requires(cce.NonNullElements(newBlockSeqGlobal));
-      Contract.Requires(cce.NonNullDictionaryAndValues(scc) &&
-                        Contract.ForAll(scc.Values, v => cce.NonNullElements(v)));
+      Contract.Requires(Cce.NonNullElements(newBlockSeqGlobal));
+      Contract.Requires(Cce.NonNullDictionaryAndValues(scc) &&
+                        Contract.ForAll(scc.Values, v => Cce.NonNullElements(v)));
       Contract.Requires(0 <= unrollMaxDepth);
       this.newBlockSeqGlobal = newBlockSeqGlobal;
       this.c = unrollMaxDepth;
@@ -248,8 +248,8 @@ namespace Microsoft.Boogie
       Dictionary<GraphNode /*!*/, SCC<GraphNode /*!*/>> scc, List<Block /*!*/> /*!*/ newBlockSeqGlobal, LoopUnroll head)
     {
       Contract.Requires(head != null);
-      Contract.Requires(cce.NonNullDictionaryAndValues(scc));
-      Contract.Requires(cce.NonNullElements(newBlockSeqGlobal));
+      Contract.Requires(Cce.NonNullDictionaryAndValues(scc));
+      Contract.Requires(Cce.NonNullElements(newBlockSeqGlobal));
       Contract.Requires(0 <= unrollMaxDepth);
       this.newBlockSeqGlobal = newBlockSeqGlobal;
       this.c = unrollMaxDepth;

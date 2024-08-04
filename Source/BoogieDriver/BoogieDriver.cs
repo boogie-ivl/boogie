@@ -9,7 +9,7 @@ namespace Microsoft.Boogie
   {
     public static int Main(string[] args)
     {
-      Contract.Requires(cce.NonNullElements(args));
+      Contract.Requires(Cce.NonNullElements(args));
 
       var options = new CommandLineOptions(Console.Out, new ConsolePrinter())
       {

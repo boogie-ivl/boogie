@@ -1159,7 +1159,7 @@ namespace Microsoft.Boogie
         }
         else
         {
-          throw new cce.UnreachableException();
+          throw new Cce.UnreachableException();
         }
       }
 
@@ -1223,7 +1223,7 @@ namespace Microsoft.Boogie
           mapType.TypeParameters.ForEach(x => boundTypeVariables.Remove(x));
           return returnVal;
         }
-        throw new cce.UnreachableException();
+        throw new Cce.UnreachableException();
       }
     }
   }
@@ -1563,7 +1563,7 @@ namespace Microsoft.Boogie
       {
         return polymorphicMapInfos[mapType].Instances;
       }
-      throw new cce.UnreachableException();
+      throw new Cce.UnreachableException();
     }
 
     public PolymorphicMapInfo RegisterPolymorphicMapType(Type type)

@@ -160,7 +160,7 @@ namespace Microsoft.Boogie.SMTLib
           break;
         default:
           Contract.Assert(false);
-          throw new cce.UnreachableException();
+          throw new Cce.UnreachableException();
       }
 
       if (ProverName == null) {

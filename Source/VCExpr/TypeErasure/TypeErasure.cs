@@ -29,14 +29,14 @@ namespace Microsoft.Boogie.TypeErasure
     void ObjectInvariant()
     {
       Contract.Invariant(Ctor != null);
-      Contract.Invariant(cce.NonNullElements(Dtors));
+      Contract.Invariant(Cce.NonNullElements(Dtors));
     }
 
 
     public TypeCtorRepr(Function ctor, List<Function /*!*/> /*!*/ dtors)
     {
       Contract.Requires(ctor != null);
-      Contract.Requires(cce.NonNullElements(dtors));
+      Contract.Requires(Cce.NonNullElements(dtors));
       Contract.Requires(ctor.InParams.Count == dtors.Count);
       this.Ctor = ctor;
       this.Dtors = dtors;
@@ -146,7 +146,7 @@ namespace Microsoft.Boogie.TypeErasure
     {
       Contract.Requires((castFromU != null));
       Contract.Requires((castToU != null));
-      Contract.Ensures((cce.NonNullElements(Contract.ValueAtReturn(out triggers))));
+      Contract.Ensures((Cce.NonNullElements(Contract.ValueAtReturn(out triggers))));
       Contract.Ensures(Contract.ValueAtReturn(out var) != null);
       Contract.Ensures(Contract.Result<VCExpr>() != null);
       var = Gen.Variable("x", U);
@@ -245,11 +245,11 @@ namespace Microsoft.Boogie.TypeErasure
       }
 
       Type /*!*/
-        inType = cce.NonNull(fun.InParams[0]).TypedIdent.Type;
+        inType = Cce.NonNull(fun.InParams[0]).TypedIdent.Type;
       if (inType.Equals(U))
       {
         Type /*!*/
-          outType = cce.NonNull(fun.OutParams[0]).TypedIdent.Type;
+          outType = Cce.NonNull(fun.OutParams[0]).TypedIdent.Type;
         if (!TypeCasts.ContainsKey(outType))
         {
           return false;
@@ -265,7 +265,7 @@ namespace Microsoft.Boogie.TypeErasure
         }
 
         Type /*!*/
-          outType = cce.NonNull(fun.OutParams[0]).TypedIdent.Type;
+          outType = Cce.NonNull(fun.OutParams[0]).TypedIdent.Type;
         if (!outType.Equals(U))
         {
           return false;
@@ -330,8 +330,8 @@ namespace Microsoft.Boogie.TypeErasure
     public List<VCExpr /*!*/> /*!*/ CastSeq(List<VCExpr /*!*/> /*!*/ exprs, Type toType)
     {
       Contract.Requires(toType != null);
-      Contract.Requires(cce.NonNullElements(exprs));
-      Contract.Ensures(cce.NonNullElements(Contract.Result<List<VCExpr>>()));
+      Contract.Requires(Cce.NonNullElements(exprs));
+      Contract.Ensures(Cce.NonNullElements(Contract.Result<List<VCExpr>>()));
       List<VCExpr /*!*/> /*!*/
         res = new List<VCExpr /*!*/>(exprs.Count);
       foreach (VCExpr /*!*/ expr in exprs)

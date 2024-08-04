@@ -20,12 +20,12 @@ namespace Microsoft.Boogie
     [ContractInvariantMethod]
     void ObjectInvariant()
     {
-      Contract.Invariant(cce.NonNullElements(args));
+      Contract.Invariant(Cce.NonNullElements(args));
     }
 
     public CalleeCounterexampleInfo(Counterexample cex, List<object /*!>!*/> x)
     {
-      Contract.Requires(cce.NonNullElements(x));
+      Contract.Requires(Cce.NonNullElements(x));
       counterexample = cex;
       args = x;
     }
@@ -72,7 +72,7 @@ namespace Microsoft.Boogie
     {
       Contract.Invariant(Trace != null);
       Contract.Invariant(Context != null);
-      Contract.Invariant(cce.NonNullDictionaryAndValues(calleeCounterexamples));
+      Contract.Invariant(Cce.NonNullDictionaryAndValues(calleeCounterexamples));
     }
 
     public ProofRun ProofRun { get; }
@@ -125,7 +125,7 @@ namespace Microsoft.Boogie
 
     public void AddCalleeCounterexample(Dictionary<TraceLocation, CalleeCounterexampleInfo> cs)
     {
-      Contract.Requires(cce.NonNullDictionaryAndValues(cs));
+      Contract.Requires(Cce.NonNullDictionaryAndValues(cs));
       foreach (TraceLocation loc in cs.Keys)
       {
         AddCalleeCounterexample(loc, cs[loc]);
@@ -761,7 +761,7 @@ namespace Microsoft.Boogie
           break;
         default:
           Contract.Assume(false);
-          throw new cce.UnreachableException(); // unexpected case
+          throw new Cce.UnreachableException(); // unexpected case
       }
     }
 

@@ -44,7 +44,7 @@ public static Program ParseLibrary(string libraryName)
 ///</summary>
 public static int Parse(string/*!*/ filename, List<string/*!*/> defines, out /*maybe null*/ Program program, bool useBaseName=false) /* throws System.IO.IOException */ {
   Contract.Requires(filename != null);
-  Contract.Requires(cce.NonNullElements(defines,true));
+  Contract.Requires(Cce.NonNullElements(defines,true));
 
   if (filename == "stdin.bpl") {
     return Parse(Console.In, filename, defines, out program, useBaseName);
@@ -65,7 +65,7 @@ public static int Parse(string s, string/*!*/ filename, out /*maybe null*/ Progr
   Contract.Requires(s != null);
   Contract.Requires(filename != null);
 
-  byte[]/*!*/ buffer = cce.NonNull(UTF8Encoding.Default.GetBytes(s));
+  byte[]/*!*/ buffer = Cce.NonNull(UTF8Encoding.Default.GetBytes(s));
   MemoryStream ms = new MemoryStream(buffer,false);
   Errors errors = new Errors();
   Scanner scanner = new Scanner(ms, errors, filename, useBaseName);
@@ -116,9 +116,9 @@ private class BvBounds : Expr {
   }
   public override void Emit(TokenTextWriter/*!*/ stream,
                             int contextBindingStrength, bool fragileContext) {
-    Contract.Assert(false);throw new cce.UnreachableException();
+    Contract.Assert(false);throw new Cce.UnreachableException();
   }
-  public override void ComputeFreeVariables(GSet<object>/*!*/ freeVars) { Contract.Assert(false);throw new cce.UnreachableException(); }
+  public override void ComputeFreeVariables(GSet<object>/*!*/ freeVars) { Contract.Assert(false);throw new Cce.UnreachableException(); }
 
   public override int ContentHash => throw new NotSupportedException("Not supported since this type is translated away");
 
@@ -501,7 +501,7 @@ Function<.out List<Declaration>/*!*/ ds.>
     if (!allUnnamed) {
       Bpl.Type prevType = null;
       for (int i = arguments.Count; 0 <= --i; ) {
-        TypedIdent/*!*/ curr = cce.NonNull(arguments[i]).TypedIdent;
+        TypedIdent/*!*/ curr = Cce.NonNull(arguments[i]).TypedIdent;
         if (curr.HasName) {
           // the argument was given as both an identifier and a type
           prevType = curr.Type;
@@ -578,7 +578,7 @@ Axiom<out Axiom/*!*/ m>
 
 /*------------------------------------------------------------------------*/
 UserDefinedTypes<.out List<Declaration/*!*/>/*!*/ ts.>
-= (. Contract.Ensures(cce.NonNullElements(Contract.ValueAtReturn(out ts))); Declaration/*!*/ decl; QKeyValue kv = null; ts = new List<Declaration/*!*/> (); .)
+= (. Contract.Ensures(Cce.NonNullElements(Contract.ValueAtReturn(out ts))); Declaration/*!*/ decl; QKeyValue kv = null; ts = new List<Declaration/*!*/> (); .)
   "type"
   { Attribute<ref kv> }
   UserDefinedType<out decl, kv>          (.  ts.Add(decl);  .)
@@ -1040,7 +1040,7 @@ TransferCmd<out TransferCmd/*!*/ tc>
   .
 
 StructuredCmd<out StructuredCmd/*!*/ ec>
-= (. Contract.Ensures(Contract.ValueAtReturn(out ec) != null); ec = dummyStructuredCmd;  Contract.Assume(cce.IsPeerConsistent(ec));
+= (. Contract.Ensures(Contract.ValueAtReturn(out ec) != null); ec = dummyStructuredCmd;  Contract.Assume(Cce.IsPeerConsistent(ec));
      IfCmd/*!*/ ifcmd;  WhileCmd/*!*/ wcmd;  BreakCmd/*!*/ bcmd;
   .)
   ( IfCmd<out ifcmd>    (. ec = ifcmd; .)
@@ -1077,7 +1077,7 @@ WhileCmd<out WhileCmd wcmd>
      QKeyValue kv = null;
   .)
   "while"             (. x = t; .)
-  Guard<out guard>    (. Contract.Assume(guard == null || cce.Owner.None(guard)); .)
+  Guard<out guard>    (. Contract.Assume(guard == null || Cce.Owner.None(guard)); .)
   {                   (. isFree = false; z = la/*lookahead token*/; .)
     [ "free"          (. isFree = true;  .) ]
     "invariant"
@@ -1228,7 +1228,7 @@ LabelOrAssign<out Cmd c, out IToken label>
   .
 
 MapAssignIndex<.out IToken/*!*/ x, out List<Expr/*!*/>/*!*/ indexes.>
-= (.Contract.Ensures(Contract.ValueAtReturn(out x) != null); Contract.Ensures(cce.NonNullElements(Contract.ValueAtReturn(out indexes))); indexes = new List<Expr/*!*/> ();
+= (.Contract.Ensures(Contract.ValueAtReturn(out x) != null); Contract.Ensures(Cce.NonNullElements(Contract.ValueAtReturn(out indexes))); indexes = new List<Expr/*!*/> ();
      Expr/*!*/ e;
   .)
   "["                        (. x = t; .)
@@ -1666,7 +1666,7 @@ AtomExpression<out Expr/*!*/ e>
   .
 
 CodeExpression<.out List<Variable>/*!*/ locals, out List<Block/*!*/>/*!*/ blocks.>
-= (. Contract.Ensures(Contract.ValueAtReturn(out locals) != null); Contract.Ensures(cce.NonNullElements(Contract.ValueAtReturn(out blocks))); locals = new List<Variable>(); Block/*!*/ b;
+= (. Contract.Ensures(Contract.ValueAtReturn(out locals) != null); Contract.Ensures(Cce.NonNullElements(Contract.ValueAtReturn(out blocks))); locals = new List<Variable>(); Block/*!*/ b;
      blocks = new List<Block/*!*/>();
   .)
   "|{"

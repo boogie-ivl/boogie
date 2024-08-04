@@ -32,7 +32,7 @@ public abstract class TypeAxiomBuilder : ICloneable
   [ContractInvariantMethod]
   void AllTypeAxiomsInvariantMethod()
   {
-    Contract.Invariant(cce.NonNullElements(AllTypeAxioms));
+    Contract.Invariant(Cce.NonNullElements(AllTypeAxioms));
   }
 
   // list in which type axioms are incrementally collected
@@ -42,7 +42,7 @@ public abstract class TypeAxiomBuilder : ICloneable
   [ContractInvariantMethod]
   void IncTypeAxiomsInvariantMethod()
   {
-    Contract.Invariant(cce.NonNullElements(IncTypeAxioms));
+    Contract.Invariant(Cce.NonNullElements(IncTypeAxioms));
   }
 
   internal void AddTypeAxiom(VCExpr axiom)
@@ -109,7 +109,7 @@ public abstract class TypeAxiomBuilder : ICloneable
     Contract.Ensures(Contract.Result<VCExpr>() != null);
     List<VCExprVar /*!*/> /*!*/
       quantifiedVars = HelperFuns.GenVarsForInParams(fun, Gen);
-    Contract.Assert(cce.NonNullElements(quantifiedVars));
+    Contract.Assert(Cce.NonNullElements(quantifiedVars));
 
     VCExpr /*!*/
       funApp = Gen.Function(fun, HelperFuns.ToVCExprList(quantifiedVars));
@@ -122,7 +122,7 @@ public abstract class TypeAxiomBuilder : ICloneable
 
     List<VCTrigger /*!*/> /*!*/
       triggers = HelperFuns.ToList(Gen.Trigger(true, HelperFuns.ToList(funApp)));
-    Contract.Assert(cce.NonNullElements(triggers));
+    Contract.Assert(Cce.NonNullElements(triggers));
     return Gen.Forall(quantifiedVars, triggers, "typeInv:" + invFun.Name, 1, eq);
   }
 
@@ -165,7 +165,7 @@ public abstract class TypeAxiomBuilder : ICloneable
   [ContractInvariantMethod]
   void BasicTypeReprsInvariantMethod()
   {
-    Contract.Invariant(cce.NonNullDictionaryAndValues(BasicTypeReprs));
+    Contract.Invariant(Cce.NonNullDictionaryAndValues(BasicTypeReprs));
   }
 
   private VCExpr GetBasicTypeRepr(Type type)
@@ -180,7 +180,7 @@ public abstract class TypeAxiomBuilder : ICloneable
       BasicTypeReprs.Add(type, res);
     }
 
-    return cce.NonNull(res);
+    return Cce.NonNull(res);
   }
 
   private readonly IDictionary<TypeCtorDecl /*!*/, TypeCtorRepr /*!*/> /*!*/
@@ -240,7 +240,7 @@ public abstract class TypeAxiomBuilder : ICloneable
   [ContractInvariantMethod]
   void TypeVariableMappingInvariantMethod()
   {
-    Contract.Invariant(cce.NonNullDictionaryAndValues(TypeVariableMapping));
+    Contract.Invariant(Cce.NonNullDictionaryAndValues(TypeVariableMapping));
   }
 
   public VCExprVar Typed2Untyped(TypeVariable var)
@@ -253,7 +253,7 @@ public abstract class TypeAxiomBuilder : ICloneable
       TypeVariableMapping.Add(var, res);
     }
 
-    return cce.NonNull(res);
+    return Cce.NonNull(res);
   }
 
 
@@ -267,7 +267,7 @@ public abstract class TypeAxiomBuilder : ICloneable
   [ContractInvariantMethod]
   void Typed2UntypedVariablesInvariantMethod()
   {
-    Contract.Invariant(cce.NonNullDictionaryAndValues(Typed2UntypedVariables));
+    Contract.Invariant(Cce.NonNullDictionaryAndValues(Typed2UntypedVariables));
   }
 
   // This method must only be used for free (unbound) variables
@@ -283,7 +283,7 @@ public abstract class TypeAxiomBuilder : ICloneable
       AddVarTypeAxiom(res, var.Type);
     }
 
-    return cce.NonNull(res);
+    return Cce.NonNull(res);
   }
 
   /// <summary>
@@ -314,7 +314,7 @@ public abstract class TypeAxiomBuilder : ICloneable
   public VCExpr Type2Term(Type type, IDictionary<TypeVariable /*!*/, VCExpr /*!*/> /*!*/ varMapping)
   {
     Contract.Requires(type != null);
-    Contract.Requires(cce.NonNullDictionaryAndValues(varMapping));
+    Contract.Requires(Cce.NonNullDictionaryAndValues(varMapping));
     Contract.Ensures(Contract.Result<VCExpr>() != null);
     //
     if (type.IsBasic || type.IsBv || type.IsFloat)
@@ -350,7 +350,7 @@ public abstract class TypeAxiomBuilder : ICloneable
         res = Typed2Untyped(type.AsVariable);
       }
 
-      return cce.NonNull(res);
+      return Cce.NonNull(res);
       //
     }
     else if (type.IsMap)
@@ -363,7 +363,7 @@ public abstract class TypeAxiomBuilder : ICloneable
     {
       System.Diagnostics.Debug.Fail("Don't know how to handle this type: " + type);
       Contract.Assert(false);
-      throw new cce.UnreachableException(); // please the compiler
+      throw new Cce.UnreachableException(); // please the compiler
     }
   }
 

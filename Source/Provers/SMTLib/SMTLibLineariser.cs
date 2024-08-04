@@ -73,7 +73,7 @@ namespace Microsoft.Boogie.SMTLib
       SMTLibExprLineariser lin = new SMTLibExprLineariser(sw, namer, libOptions, opts, namedAssumes, optReqs);
       Contract.Assert(lin != null);
       lin.Linearise(e, LineariserOptions.Default);
-      return cce.NonNull(sw.ToString());
+      return Cce.NonNull(sw.ToString());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////
@@ -316,7 +316,7 @@ namespace Microsoft.Boogie.SMTLib
       else
       {
         Contract.Assert(false);
-        throw new cce.UnreachableException();
+        throw new Cce.UnreachableException();
       }
 
       return true;
@@ -622,7 +622,7 @@ namespace Microsoft.Boogie.SMTLib
       ///////////////////////////////////////////////////////////////////////////////////
       private void WriteApplication(string opName, VCExprNAry /*!>!*/ call, LineariserOptions options)
       {
-        Contract.Requires(cce.NonNullElements(call.Arguments));
+        Contract.Requires(Cce.NonNullElements(call.Arguments));
         Contract.Requires(options != null);
         Contract.Assert(opName != null);
 

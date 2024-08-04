@@ -153,7 +153,7 @@ public class FunctionCall : IAppliable
         null,
         // we need some token to report a possibly wrong number of
         // arguments
-        actuals.Count > 0 ? cce.NonNull(actuals[0]).tok : Token.NoToken,
+        actuals.Count > 0 ? Cce.NonNull(actuals[0]).tok : Token.NoToken,
         "application of " + name.Name,
         tc);
 

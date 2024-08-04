@@ -103,7 +103,7 @@ public abstract class TypeEraser : MutatingVCExprVisitor<VariableBindings /*!*/>
       return AxBuilder.Typed2Untyped(node);
     }
 
-    return cce.NonNull(res);
+    return Cce.NonNull(res);
   }
 
   ////////////////////////////////////////////////////////////////////////////
@@ -121,8 +121,8 @@ public abstract class TypeEraser : MutatingVCExprVisitor<VariableBindings /*!*/>
     VariableBindings /*!*/ bindings)
   {
     Contract.Requires(bindings != null);
-    Contract.Requires(cce.NonNullElements(oldBoundVars));
-    Contract.Ensures(cce.NonNullElements(Contract.Result<List<VCExprVar>>()));
+    Contract.Requires(Cce.NonNullElements(oldBoundVars));
+    Contract.Ensures(Cce.NonNullElements(Contract.Result<List<VCExprVar>>()));
 
     List<VCExprVar /*!*/> /*!*/
       newBoundVars = new List<VCExprVar /*!*/>(oldBoundVars.Count);
@@ -155,10 +155,10 @@ public abstract class TypeEraser : MutatingVCExprVisitor<VariableBindings /*!*/>
   {
     Contract.Requires(node != null);
     Contract.Requires(newNode != null);
-    Contract.Requires(cce.NonNullElements(occurringVars));
+    Contract.Requires(Cce.NonNullElements(occurringVars));
     Contract.Requires(oldBindings != null);
     Contract.Ensures(Contract.ValueAtReturn(out newBindings) != null);
-    Contract.Ensures(cce.NonNullElements(Contract.ValueAtReturn(out newBoundVars)));
+    Contract.Ensures(Cce.NonNullElements(Contract.ValueAtReturn(out newBoundVars)));
     List<VCExprVar /*!*/> castVariables =
       VariableCastCollector.FindCastVariables(node, newNode, AxBuilder);
     if (castVariables.Count == 0)

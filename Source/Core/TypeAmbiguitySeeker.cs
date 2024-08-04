@@ -56,7 +56,7 @@ namespace Microsoft.Boogie
     {
       //Contract.Requires(node != null);
       Contract.Ensures(Contract.Result<Expr>() != null);
-      CheckTypeParams(node, cce.NonNull(node.TypeParameters));
+      CheckTypeParams(node, Cce.NonNull(node.TypeParameters));
       return base.VisitNAryExpr(node);
     }
 
@@ -64,7 +64,7 @@ namespace Microsoft.Boogie
     {
       //Contract.Requires(node != null);
       Contract.Ensures(Contract.Result<AssignLhs>() != null);
-      CheckTypeParams(node, cce.NonNull(node.TypeParameters));
+      CheckTypeParams(node, Cce.NonNull(node.TypeParameters));
       return base.VisitMapAssignLhs(node);
     }
   }

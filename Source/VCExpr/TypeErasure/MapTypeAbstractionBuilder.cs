@@ -57,7 +57,7 @@ internal abstract class MapTypeAbstractionBuilder
   [ContractInvariantMethod]
   void AbstractionVariablesInvariantMethod()
   {
-    Contract.Invariant(cce.NonNullElements(AbstractionVariables));
+    Contract.Invariant(Cce.NonNullElements(AbstractionVariables));
   }
 
   private TypeVariable AbstractionVariable(int num)

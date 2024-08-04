@@ -81,8 +81,8 @@ namespace Microsoft.Boogie
       List<Type /*!*/> /*!*/ typeArguments)
     {
       Contract.Requires(op != null);
-      Contract.Requires(cce.NonNullElements(arguments));
-      Contract.Requires(cce.NonNullElements(typeArguments));
+      Contract.Requires(Cce.NonNullElements(arguments));
+      Contract.Requires(Cce.NonNullElements(typeArguments));
       if (typeArguments.Count > 0)
       {
         return new VCExprMultiAry(op, arguments, typeArguments);
@@ -104,7 +104,7 @@ namespace Microsoft.Boogie
     public VCExpr /*!*/ Function(VCExprOp /*!*/ op, List<VCExpr /*!*/> /*!*/ arguments)
     {
       Contract.Requires(op != null);
-      Contract.Requires(cce.NonNullElements(arguments));
+      Contract.Requires(Cce.NonNullElements(arguments));
       Contract.Ensures(Contract.Result<VCExpr>() != null);
 
       return Function(op, arguments, VCExprNAry.EMPTY_TYPE_LIST);
@@ -113,7 +113,7 @@ namespace Microsoft.Boogie
     public VCExpr /*!*/ Function(VCExprOp /*!*/ op, params VCExpr[] /*!*/ arguments)
     {
       Contract.Requires(op != null);
-      Contract.Requires(cce.NonNullElements(arguments));
+      Contract.Requires(Cce.NonNullElements(arguments));
 
       return Function(op,
         HelperFuns.ToNonNullList(arguments),
@@ -123,8 +123,8 @@ namespace Microsoft.Boogie
     public VCExpr /*!*/ Function(VCExprOp /*!*/ op, VCExpr[] /*!*/ arguments, Type[] /*!*/ typeArguments)
     {
       Contract.Requires(op != null);
-      Contract.Requires(cce.NonNullElements(arguments));
-      Contract.Requires(cce.NonNullElements(typeArguments));
+      Contract.Requires(Cce.NonNullElements(arguments));
+      Contract.Requires(Cce.NonNullElements(typeArguments));
       Contract.Ensures(Contract.Result<VCExpr>() != null);
 
 
@@ -136,7 +136,7 @@ namespace Microsoft.Boogie
     public VCExpr /*!*/ Function(Function /*!*/ op, List<VCExpr /*!*/> /*!*/ arguments)
     {
       Contract.Requires(op != null);
-      Contract.Requires(cce.NonNullElements(arguments));
+      Contract.Requires(Cce.NonNullElements(arguments));
       Contract.Ensures(Contract.Result<VCExpr>() != null);
 
       return Function(BoogieFunctionOp(op), arguments, VCExprNAry.EMPTY_TYPE_LIST);
@@ -144,7 +144,7 @@ namespace Microsoft.Boogie
 
     public VCExpr /*!*/ Function(Function /*!*/ op, params VCExpr[] /*!*/ arguments)
     {
-      Contract.Requires(cce.NonNullElements(arguments));
+      Contract.Requires(Cce.NonNullElements(arguments));
       Contract.Requires(op != null);
       Contract.Ensures(Contract.Result<VCExpr>() != null);
 
@@ -157,7 +157,7 @@ namespace Microsoft.Boogie
     public VCExpr /*!*/ NAry(VCExprOp /*!*/ op, List<VCExpr /*!*/> /*!*/ args)
     {
       Contract.Requires(op != null);
-      Contract.Requires(cce.NonNullElements(args));
+      Contract.Requires(Cce.NonNullElements(args));
       Contract.Ensures(Contract.Result<VCExpr>() != null);
 
       return NAry(op, args.ToArray());
@@ -166,7 +166,7 @@ namespace Microsoft.Boogie
     public VCExpr /*!*/ NAry(VCExprOp /*!*/ op, params VCExpr[] /*!*/ args)
     {
       Contract.Requires(op != null);
-      Contract.Requires(cce.NonNullElements(args));
+      Contract.Requires(Cce.NonNullElements(args));
       Contract.Requires(op == AndOp || op == OrOp);
       Contract.Ensures(Contract.Result<VCExpr>() != null);
 
@@ -176,7 +176,7 @@ namespace Microsoft.Boogie
         e = and ? True : False;
       foreach (VCExpr a in args)
       {
-        e = and ? AndSimp(e, cce.NonNull(a)) : OrSimp(e, cce.NonNull(a));
+        e = and ? AndSimp(e, Cce.NonNull(a)) : OrSimp(e, Cce.NonNull(a));
       }
 
       return e;
@@ -251,7 +251,7 @@ namespace Microsoft.Boogie
       Contract.Requires(e1 != null);
       Contract.Ensures(Contract.Result<VCExpr>() != null);
 
-      VCExprOp op = cce.NonNull(cce.NonNull(e0).Type).IsInt ? AddIOp : AddROp;
+      VCExprOp op = Cce.NonNull(Cce.NonNull(e0).Type).IsInt ? AddIOp : AddROp;
       return Function(op, e0, e1);
     }
 
@@ -273,7 +273,7 @@ namespace Microsoft.Boogie
 
     public VCExpr /*!*/ Distinct(List<VCExpr /*!*/> /*!*/ args)
     {
-      Contract.Requires(cce.NonNullElements(args));
+      Contract.Requires(Cce.NonNullElements(args));
       Contract.Ensures(Contract.Result<VCExpr>() != null);
 
       if (args.Count <= 1)
@@ -582,7 +582,7 @@ namespace Microsoft.Boogie
     public VCExpr Let(List<VCExprLetBinding> bindings, VCExpr body)
     {
       Contract.Requires(body != null);
-      Contract.Requires(cce.NonNullElements(bindings));
+      Contract.Requires(Cce.NonNullElements(bindings));
       Contract.Ensures(Contract.Result<VCExpr>() != null);
       if (bindings.Count == 0)
       {
@@ -596,7 +596,7 @@ namespace Microsoft.Boogie
     public VCExpr Let(VCExpr body, params VCExprLetBinding[] bindings)
     {
       Contract.Requires(body != null);
-      Contract.Requires((cce.NonNullElements(bindings)));
+      Contract.Requires((Cce.NonNullElements(bindings)));
       Contract.Ensures(Contract.Result<VCExpr>() != null);
       return Let(HelperFuns.ToNonNullList(bindings), body);
     }
@@ -616,7 +616,7 @@ namespace Microsoft.Boogie
     // Turn let-bindings let v = E in ... into implications E ==> v
     public VCExpr AsImplications(List<VCExprLetBinding> bindings)
     {
-      Contract.Requires(cce.NonNullElements(bindings));
+      Contract.Requires(Cce.NonNullElements(bindings));
       Contract.Ensures(Contract.Result<VCExpr>() != null);
       VCExpr /*!*/
         antecedents = True;
@@ -632,7 +632,7 @@ namespace Microsoft.Boogie
     // Turn let-bindings let v = E in ... into equations v == E
     public VCExpr AsEquations(List<VCExprLetBinding> bindings)
     {
-      Contract.Requires(cce.NonNullElements(bindings));
+      Contract.Requires(Cce.NonNullElements(bindings));
       Contract.Ensures(Contract.Result<VCExpr>() != null);
       VCExpr /*!*/
         antecedents = True;
@@ -685,9 +685,9 @@ namespace Microsoft.Boogie
     {
       Contract.Requires(body != null);
       Contract.Requires(info != null);
-      Contract.Requires(cce.NonNullElements(triggers));
-      Contract.Requires(cce.NonNullElements(vars));
-      Contract.Requires(cce.NonNullElements(typeParams));
+      Contract.Requires(Cce.NonNullElements(triggers));
+      Contract.Requires(Cce.NonNullElements(vars));
+      Contract.Requires(Cce.NonNullElements(typeParams));
       Contract.Ensures(Contract.Result<VCExpr>() != null);
       return new VCExprQuantifier(quan, typeParams, vars, triggers, info, body);
     }
@@ -697,9 +697,9 @@ namespace Microsoft.Boogie
     {
       Contract.Requires(body != null);
       Contract.Requires(info != null);
-      Contract.Requires(cce.NonNullElements(triggers));
-      Contract.Requires(cce.NonNullElements(vars));
-      Contract.Requires(cce.NonNullElements(typeParams));
+      Contract.Requires(Cce.NonNullElements(triggers));
+      Contract.Requires(Cce.NonNullElements(vars));
+      Contract.Requires(Cce.NonNullElements(typeParams));
       Contract.Ensures(Contract.Result<VCExpr>() != null);
       return Quantify(Quantifier.ALL, typeParams, vars, triggers, info, body);
     }
@@ -709,8 +709,8 @@ namespace Microsoft.Boogie
     {
       Contract.Requires(body != null);
       Contract.Requires(qid != null);
-      Contract.Requires(cce.NonNullElements(triggers));
-      Contract.Requires(cce.NonNullElements(vars));
+      Contract.Requires(Cce.NonNullElements(triggers));
+      Contract.Requires(Cce.NonNullElements(vars));
       Contract.Ensures(Contract.Result<VCExpr>() != null);
       return Quantify(Quantifier.ALL, new List<TypeVariable /*!*/>(), vars,
         triggers, new VCQuantifierInfo(qid, -1, weight), body);
@@ -719,8 +719,8 @@ namespace Microsoft.Boogie
     public VCExpr Forall(List<VCExprVar /*!*/> /*!*/ vars, List<VCTrigger /*!*/> /*!*/ triggers, VCExpr body)
     {
       Contract.Requires(body != null);
-      Contract.Requires(cce.NonNullElements(triggers));
-      Contract.Requires(cce.NonNullElements(vars));
+      Contract.Requires(Cce.NonNullElements(triggers));
+      Contract.Requires(Cce.NonNullElements(vars));
       Contract.Ensures(Contract.Result<VCExpr>() != null);
       return Quantify(Quantifier.ALL, new List<TypeVariable /*!*/>(), vars,
         triggers, new VCQuantifierInfo(null, -1), body);
@@ -740,9 +740,9 @@ namespace Microsoft.Boogie
     {
       Contract.Requires(body != null);
       Contract.Requires(info != null);
-      Contract.Requires(cce.NonNullElements(triggers));
-      Contract.Requires(cce.NonNullElements(vars));
-      Contract.Requires(cce.NonNullElements(typeParams));
+      Contract.Requires(Cce.NonNullElements(triggers));
+      Contract.Requires(Cce.NonNullElements(vars));
+      Contract.Requires(Cce.NonNullElements(typeParams));
       Contract.Ensures(Contract.Result<VCExpr>() != null);
       return Quantify(Quantifier.EX, typeParams, vars, triggers, info, body);
     }
@@ -750,8 +750,8 @@ namespace Microsoft.Boogie
     public VCExpr Exists(List<VCExprVar /*!*/> /*!*/ vars, List<VCTrigger /*!*/> /*!*/ triggers, VCExpr body)
     {
       Contract.Requires(body != null);
-      Contract.Requires(cce.NonNullElements(triggers));
-      Contract.Requires(cce.NonNullElements(vars));
+      Contract.Requires(Cce.NonNullElements(triggers));
+      Contract.Requires(Cce.NonNullElements(vars));
       Contract.Ensures(Contract.Result<VCExpr>() != null);
       return Quantify(Quantifier.EX, new List<TypeVariable /*!*/>(), vars,
         triggers, new VCQuantifierInfo(null, -1), body);
@@ -768,7 +768,7 @@ namespace Microsoft.Boogie
 
     public VCTrigger Trigger(bool pos, List<VCExpr> exprs)
     {
-      Contract.Requires(cce.NonNullElements(exprs));
+      Contract.Requires(Cce.NonNullElements(exprs));
       Contract.Ensures(Contract.Result<VCTrigger>() != null);
       return new VCTrigger(pos, exprs);
     }

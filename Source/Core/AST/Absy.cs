@@ -85,7 +85,7 @@ namespace Microsoft.Boogie
     {
       Contract.Ensures(Contract.Result<Absy>() != null);
       Absy /*!*/
-        result = cce.NonNull((Absy /*!*/) this.MemberwiseClone());
+        result = Cce.NonNull((Absy /*!*/) this.MemberwiseClone());
       result.UniqueId = System.Threading.Interlocked.Increment(ref CurrentAbsyNodeId); // BUGBUG??
 
       if (InternalNumberedMetadata != null)
@@ -762,7 +762,7 @@ namespace Microsoft.Boogie
     [Pure]
     public override string ToString()
     {
-      return cce.NonNull(Name);
+      return Cce.NonNull(Name);
     }
     
     public virtual bool MayRename => true;
@@ -1128,7 +1128,7 @@ namespace Microsoft.Boogie
 
     public static void ResolveTypeSynonyms(List<TypeSynonymDecl /*!*/> /*!*/ synonymDecls, ResolutionContext /*!*/ rc)
     {
-      Contract.Requires(cce.NonNullElements(synonymDecls));
+      Contract.Requires(Cce.NonNullElements(synonymDecls));
       Contract.Requires(rc != null);
       // then discover all dependencies between type synonyms
       IDictionary<TypeSynonymDecl /*!*/, List<TypeSynonymDecl /*!*/> /*!*/> /*!*/
@@ -1196,7 +1196,7 @@ namespace Microsoft.Boogie
       ResolutionContext /*!*/ rc)
     {
       Contract.Requires(type != null);
-      Contract.Requires(cce.NonNullElements(deps));
+      Contract.Requires(Cce.NonNullElements(deps));
       Contract.Requires(rc != null);
       if (type.IsVariable || type.IsBasic)
       {
@@ -1398,7 +1398,7 @@ namespace Microsoft.Boogie
         throw new ArgumentException("VariableComparer works only on objects of type Variable");
       }
 
-      return cce.NonNull(A.Name).CompareTo(B.Name);
+      return Cce.NonNull(A.Name).CompareTo(B.Name);
     }
   }
 
@@ -1741,12 +1741,12 @@ namespace Microsoft.Boogie
     }
 
     protected DeclWithFormals(DeclWithFormals that)
-      : base(that.tok, cce.NonNull(that.Name))
+      : base(that.tok, Cce.NonNull(that.Name))
     {
       Contract.Requires(that != null);
       this.TypeParameters = that.TypeParameters;
-      this.inParams = cce.NonNull(that.InParams);
-      this.outParams = cce.NonNull(that.OutParams);
+      this.inParams = Cce.NonNull(that.InParams);
+      this.outParams = Cce.NonNull(that.OutParams);
     }
 
     public byte[] MD5Checksum_;
@@ -1938,7 +1938,7 @@ namespace Microsoft.Boogie
       {
         Contract.Assert(OutParams.Count == 1);
         stream.Write(" : ");
-        cce.NonNull(OutParams[0]).TypedIdent.Type.Emit(stream);
+        Cce.NonNull(OutParams[0]).TypedIdent.Type.Emit(stream);
       }
       else if (OutParams.Count > 0)
       {
@@ -2240,11 +2240,11 @@ namespace Microsoft.Boogie
       {
         Contract.Assert(DefinitionBody == null);
         Body.Typecheck(tc);
-        if (!cce.NonNull(Body.Type).Unify(cce.NonNull(OutParams[0]).TypedIdent.Type))
+        if (!Cce.NonNull(Body.Type).Unify(Cce.NonNull(OutParams[0]).TypedIdent.Type))
         {
           tc.Error(Body,
             "function body with invalid type: {0} (expected: {1})",
-            Body.Type, cce.NonNull(OutParams[0]).TypedIdent.Type);
+            Body.Type, Cce.NonNull(OutParams[0]).TypedIdent.Type);
         }
       }
       else if (DefinitionBody != null)
@@ -2253,11 +2253,11 @@ namespace Microsoft.Boogie
 
         // We are matching the type of the function body with output param, and not the type
         // of DefinitionBody, which is always going to be bool (since it is of the form func_call == func_body)
-        if (!cce.NonNull(DefinitionBody.Args[1].Type).Unify(cce.NonNull(OutParams[0]).TypedIdent.Type))
+        if (!Cce.NonNull(DefinitionBody.Args[1].Type).Unify(Cce.NonNull(OutParams[0]).TypedIdent.Type))
         {
           tc.Error(DefinitionBody.Args[1],
             "function body with invalid type: {0} (expected: {1})",
-            DefinitionBody.Args[1].Type, cce.NonNull(OutParams[0]).TypedIdent.Type);
+            DefinitionBody.Args[1].Type, Cce.NonNull(OutParams[0]).TypedIdent.Type);
         }
       }
     }
@@ -3692,7 +3692,7 @@ namespace Microsoft.Boogie
     public static void Emit(this List<Declaration /*!*/> /*!*/ decls, TokenTextWriter stream)
     {
       Contract.Requires(stream != null);
-      Contract.Requires(cce.NonNullElements(decls));
+      Contract.Requires(Cce.NonNullElements(decls));
       bool first = true;
       foreach (Declaration d in decls)
       {
@@ -4041,7 +4041,7 @@ namespace Microsoft.Boogie
         Contract.Assume(g.labelTargets != null);
         if (g.labelTargets.Count == 1)
         {
-          return new Sequential(new AtomicRE(b), Transform(cce.NonNull(g.labelTargets[0])));
+          return new Sequential(new AtomicRE(b), Transform(Cce.NonNull(g.labelTargets[0])));
         }
         else
         {
@@ -4060,7 +4060,7 @@ namespace Microsoft.Boogie
       else
       {
         Contract.Assume(false);
-        throw new cce.UnreachableException();
+        throw new Cce.UnreachableException();
       }
     }
   }

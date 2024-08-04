@@ -6,7 +6,7 @@ using System.Diagnostics.Contracts;
 /// <summary>
 /// A class containing static methods to extend the functionality of Code Contracts
 /// </summary>
-public static class cce
+public static class Cce
 {
   //[Pure]
   //public static bool NonNullElements<T>(Microsoft.Dafny.Graph<T> collection) {
@@ -29,7 +29,7 @@ public static class cce
   [Pure]
   public static bool NonNullDictionaryAndValues<TKey, TValue>(IDictionary<TKey, TValue> collection) where TValue : class
   {
-    return collection != null && cce.NonNullElements(collection.Values);
+    return collection != null && Cce.NonNullElements(collection.Values);
   }
 
   //[Pure]
@@ -46,7 +46,7 @@ public static class cce
   [Pure]
   public static bool NonNullElements<T>(IEnumerable<T> collection, bool nullability) where T : class
   {
-    return (nullability && collection == null) || cce.NonNullElements(collection);
+    return (nullability && collection == null) || Cce.NonNullElements(collection);
     //Should be the same as:
     /*if(nullability&&collection==null)
      * return true;

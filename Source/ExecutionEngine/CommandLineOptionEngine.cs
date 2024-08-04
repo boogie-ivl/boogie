@@ -17,7 +17,7 @@ public class CommandLineOptionEngine
     Contract.Invariant(ToolName != null);
     Contract.Invariant(DescriptiveToolName != null);
     Contract.Invariant(this._environment != null);
-    Contract.Invariant(cce.NonNullElements(this._files));
+    Contract.Invariant(Cce.NonNullElements(this._files));
     Contract.Invariant(this._fileTimestamp != null);
   }
 
@@ -43,7 +43,7 @@ public class CommandLineOptionEngine
   {
     get
     {
-      Contract.Ensures(cce.NonNullElements(Contract.Result<IList<string>>()));
+      Contract.Ensures(Cce.NonNullElements(Contract.Result<IList<string>>()));
       Contract.Ensures(Contract.Result<IList<string>>().IsReadOnly);
       return this._files.AsReadOnly();
     }
@@ -67,7 +67,7 @@ public class CommandLineOptionEngine
     get
     {
       Contract.Ensures(Contract.Result<string>() != null);
-      return cce.NonNull(cce
+      return Cce.NonNull(Cce
         .NonNull(System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly()
           .Location)).FileVersion);
     }
@@ -92,7 +92,7 @@ public class CommandLineOptionEngine
   }
 
   private string /*!*/
-    _fileTimestamp = cce.NonNull(DateTime.Now.ToString("o")).Replace(':', '.');
+    _fileTimestamp = Cce.NonNull(DateTime.Now.ToString("o")).Replace(':', '.');
 
   public string FileTimestamp
   {
@@ -188,16 +188,16 @@ public class CommandLineOptionEngine
   /// </summary>
   public virtual bool Parse(string[] /*!*/ args)
   {
-    Contract.Requires(cce.NonNullElements(args));
+    Contract.Requires(Cce.NonNullElements(args));
 
     // save the command line options for the log files
     Environment += "Command Line Options: " + string.Join(" ", args);
-    args = cce.NonNull((string[]) args.Clone()); // the operations performed may mutate the array, so make a copy
+    args = Cce.NonNull((string[]) args.Clone()); // the operations performed may mutate the array, so make a copy
     var ps = InitializeCommandLineParseState(args);
 
     while (ps.i < args.Length)
     {
-      cce.LoopInvariant(ps.args == args);
+      Cce.LoopInvariant(ps.args == args);
       string arg = args[ps.i];
       Contract.Assert(arg != null);
       ps.s = arg.Trim();

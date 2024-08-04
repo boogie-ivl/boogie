@@ -22,8 +22,8 @@ class BlockStats
   [ContractInvariantMethod]
   void ObjectInvariant()
   {
-    Contract.Invariant(cce.NonNullElements(virtualSuccessors));
-    Contract.Invariant(cce.NonNullElements(virtualPredecessors));
+    Contract.Invariant(Cce.NonNullElements(virtualSuccessors));
+    Contract.Invariant(Cce.NonNullElements(virtualPredecessors));
     Contract.Invariant(block != null);
   }
 

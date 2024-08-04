@@ -23,7 +23,7 @@ internal class VariableCastCollector : TraversingVCExprVisitor<bool, bool>
     Contract.Requires((axBuilder != null));
     Contract.Requires((newNode != null));
     Contract.Requires((oldNode != null));
-    Contract.Ensures(cce.NonNullElements(Contract.Result<List<VCExprVar>>()));
+    Contract.Ensures(Cce.NonNullElements(Contract.Result<List<VCExprVar>>()));
     VariableCastCollector /*!*/
       collector = new VariableCastCollector(axBuilder);
     Contract.Assert(collector != null);
@@ -79,7 +79,7 @@ internal class VariableCastCollector : TraversingVCExprVisitor<bool, bool>
   [ContractInvariantMethod]
   void ObjectInvariant()
   {
-    Contract.Invariant(cce.NonNullElements(varsInCasts));
+    Contract.Invariant(Cce.NonNullElements(varsInCasts));
     Contract.Invariant(varsOutsideCasts != null && Contract.ForAll(varsOutsideCasts, voc => voc.Key != null));
     Contract.Invariant(AxBuilder != null);
   }

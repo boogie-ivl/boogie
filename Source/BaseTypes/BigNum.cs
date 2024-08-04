@@ -148,7 +148,7 @@ namespace Microsoft.BaseTypes
     public override string /*!*/ ToString()
     {
       Contract.Ensures(Contract.Result<string>() != null);
-      return cce.NonNull(val.ToString());
+      return Cce.NonNull(val.ToString());
     }
 
     //////////////////////////////////////////////////////////////////////////////

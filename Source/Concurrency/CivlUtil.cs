@@ -36,7 +36,7 @@ namespace Microsoft.Boogie
         }
         else
         {
-          throw new cce.UnreachableException();
+          throw new Cce.UnreachableException();
         }
       }
     }
@@ -108,7 +108,7 @@ namespace Microsoft.Boogie
         liveVars.ExceptWith(stateCmd.Locals);
         return liveVars;
       }
-      throw new cce.UnreachableException();
+      throw new Cce.UnreachableException();
     }
   }
 

@@ -374,7 +374,7 @@ namespace Core
 
       // the resulting lifted function applied to free variables
       IToken tok = _lambda.tok;
-      Formal res = new Formal(tok, new TypedIdent(tok, TypedIdent.NoName, cce.NonNull(_lambda.Type)), false);
+      Formal res = new Formal(tok, new TypedIdent(tok, TypedIdent.NoName, Cce.NonNull(_lambda.Type)), false);
 
       var liftedLambda = (LambdaExpr) LambdaLiftingMaxHolesFiller.Fill(
         (from kvp in _templates where !kvp.Value.ContainsBoundVariables() select kvp.Key).ToList(),
@@ -490,7 +490,7 @@ namespace Core
       else
       {
         // After OldFinder pass, old expressions should only occur around free variables
-        throw new cce.UnreachableException();
+        throw new Cce.UnreachableException();
       }
 
       return node;

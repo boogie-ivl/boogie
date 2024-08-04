@@ -346,7 +346,7 @@ namespace Microsoft.Boogie
 
     public void AddParams(IEnumerable<object> ps)
     {
-      Contract.Requires(cce.NonNullElements(ps));
+      Contract.Requires(Cce.NonNullElements(ps));
       this._params.AddRange(ps);
     }
 
@@ -359,7 +359,7 @@ namespace Microsoft.Boogie
     {
       get
       {
-        Contract.Ensures(cce.NonNullElements(Contract.Result<IList<object>>()));
+        Contract.Ensures(Cce.NonNullElements(Contract.Result<IList<object>>()));
         Contract.Ensures(Contract.Result<IList<object>>().IsReadOnly);
         return this._params.AsReadOnly();
       }
@@ -371,7 +371,7 @@ namespace Microsoft.Boogie
     void ObjectInvariant()
     {
       Contract.Invariant(Key != null);
-      Contract.Invariant(cce.NonNullElements(this._params));
+      Contract.Invariant(Cce.NonNullElements(this._params));
     }
 
     public QKeyValue(IToken tok, string key, IList<object /*!*/> /*!*/ parameters, QKeyValue next)
@@ -379,7 +379,7 @@ namespace Microsoft.Boogie
     {
       Contract.Requires(key != null);
       Contract.Requires(tok != null);
-      Contract.Requires(cce.NonNullElements(parameters));
+      Contract.Requires(Cce.NonNullElements(parameters));
       Key = key;
       this._params = new List<object>(parameters);
       Next = next;
@@ -965,7 +965,7 @@ namespace Microsoft.Boogie
         //Contract.Requires(node != null);
         Contract.Ensures(Contract.Result<Expr>() != null);
         FunctionCall fn = node.Fun as FunctionCall;
-        if (fn != null && cce.NonNull(fn.Func).NeverTrigger)
+        if (fn != null && Cce.NonNull(fn.Func).NeverTrigger)
         {
           parent.Triggers = new Trigger(fn.Func.tok, false, new List<Expr> {node}, parent.Triggers);
         }

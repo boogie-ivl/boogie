@@ -15,16 +15,16 @@ public class VariableBindings
   [ContractInvariantMethod]
   void ObjectInvariant()
   {
-    Contract.Invariant(cce.NonNullDictionaryAndValues(VCExprVarBindings));
-    Contract.Invariant(cce.NonNullDictionaryAndValues(TypeVariableBindings));
+    Contract.Invariant(Cce.NonNullDictionaryAndValues(VCExprVarBindings));
+    Contract.Invariant(Cce.NonNullDictionaryAndValues(TypeVariableBindings));
   }
 
 
   public VariableBindings(IDictionary<VCExprVar /*!*/, VCExprVar /*!*/> /*!*/ vcExprVarBindings,
     IDictionary<TypeVariable /*!*/, VCExpr /*!*/> /*!*/ typeVariableBindings)
   {
-    Contract.Requires(cce.NonNullDictionaryAndValues(vcExprVarBindings));
-    Contract.Requires(cce.NonNullDictionaryAndValues(typeVariableBindings));
+    Contract.Requires(Cce.NonNullDictionaryAndValues(vcExprVarBindings));
+    Contract.Requires(Cce.NonNullDictionaryAndValues(typeVariableBindings));
     this.VCExprVarBindings = vcExprVarBindings;
     this.TypeVariableBindings = typeVariableBindings;
   }
@@ -43,7 +43,7 @@ public class VariableBindings
         new Dictionary<VCExprVar /*!*/, VCExprVar /*!*/>();
     foreach (KeyValuePair<VCExprVar /*!*/, VCExprVar /*!*/> pair in VCExprVarBindings)
     {
-      Contract.Assert(cce.NonNullElements(pair));
+      Contract.Assert(Cce.NonNullElements(pair));
       newVCExprVarBindings.Add(pair);
     }
 
@@ -52,7 +52,7 @@ public class VariableBindings
         new Dictionary<TypeVariable /*!*/, VCExpr /*!*/>();
     foreach (KeyValuePair<TypeVariable /*!*/, VCExpr /*!*/> pair in TypeVariableBindings)
     {
-      Contract.Assert(cce.NonNullElements(pair));
+      Contract.Assert(Cce.NonNullElements(pair));
       newTypeVariableBindings.Add(pair);
     }
 

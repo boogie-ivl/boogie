@@ -43,14 +43,14 @@ public abstract class OpTypeEraser : StandardVCExprOpVisitor<VCExpr /*!*/, Varia
     Contract.Ensures(Contract.Result<VCExpr>() != null);
     System.Diagnostics.Debug.Fail("Don't know how to erase types in this expression: " + node);
     Contract.Assert(false);
-    throw new cce.UnreachableException(); // to please the compiler
+    throw new Cce.UnreachableException(); // to please the compiler
   }
 
   private List<VCExpr /*!*/> /*!*/ MutateSeq(VCExprNAry node, VariableBindings bindings, int newPolarity)
   {
     Contract.Requires((bindings != null));
     Contract.Requires((node != null));
-    Contract.Ensures(cce.NonNullElements(Contract.Result<List<VCExpr>>()));
+    Contract.Ensures(Cce.NonNullElements(Contract.Result<List<VCExpr>>()));
     int oldPolarity = Eraser.Polarity;
     Eraser.Polarity = newPolarity;
     List<VCExpr /*!*/> /*!*/

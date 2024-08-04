@@ -17,8 +17,8 @@ namespace Microsoft.Boogie.Clustering
     void ObjectInvariant()
     {
       Contract.Invariant(Gen != null);
-      Contract.Invariant(cce.NonNullDictionaryAndValues(GlobalVariables));
-      Contract.Invariant(cce.NonNullDictionaryAndValues(SubtermClusters));
+      Contract.Invariant(Cce.NonNullDictionaryAndValues(GlobalVariables));
+      Contract.Invariant(Cce.NonNullDictionaryAndValues(SubtermClusters));
     }
 
 
@@ -40,7 +40,7 @@ namespace Microsoft.Boogie.Clustering
       foreach (KeyValuePair<VCExprOp /*!*/, TermClustersSameHead /*!*/> pair
         in SubtermClusters)
       {
-        Contract.Assert(cce.NonNullElements(pair));
+        Contract.Assert(Cce.NonNullElements(pair));
         pair.Value.UnifyClusters();
       }
     }
@@ -84,7 +84,7 @@ namespace Microsoft.Boogie.Clustering
           SubtermClusters.Add(op, clusters);
         }
 
-        cce.NonNull(clusters).AddExpr(node);
+        Cce.NonNull(clusters).AddExpr(node);
       }
 
       return res;
@@ -110,7 +110,7 @@ namespace Microsoft.Boogie.Clustering
       foreach (KeyValuePair<VCExprOp /*!*/, TermClustersSameHead /*!*/> pair
         in SubtermClusters)
       {
-        Contract.Assert(cce.NonNullElements(pair));
+        Contract.Assert(Cce.NonNullElements(pair));
         res = res + pair.Value + "\n";
       }
 
@@ -129,7 +129,7 @@ namespace Microsoft.Boogie.Clustering
     {
       Contract.Invariant(Op != null);
       Contract.Invariant(Gen != null);
-      Contract.Invariant(cce.NonNullDictionaryAndValues(GlobalVariables));
+      Contract.Invariant(Cce.NonNullDictionaryAndValues(GlobalVariables));
     }
 
     // variables that are global and treated like constants
@@ -145,7 +145,7 @@ namespace Microsoft.Boogie.Clustering
     public TermClustersSameHead(VCExprOp op, IDictionary<VCExprVar /*!*/, VCExprVar /*!*/> /*!*/ globalVars,
       VCExpressionGenerator /*!*/ gen)
     {
-      Contract.Requires(cce.NonNullDictionaryAndValues(globalVars));
+      Contract.Requires(Cce.NonNullDictionaryAndValues(globalVars));
       Contract.Requires(gen != null);
       Contract.Requires(op != null);
       Op = op;
@@ -251,7 +251,7 @@ namespace Microsoft.Boogie.Clustering
       void ObjectInvariant()
       {
         Contract.Invariant(Gen != null);
-        Contract.Invariant(cce.NonNullDictionaryAndValues(GlobalVariables));
+        Contract.Invariant(Cce.NonNullDictionaryAndValues(GlobalVariables));
         Contract.Invariant(Clusters != null);
         Contract.Invariant(RemainingClusters != null);
         Contract.Invariant(Distances != null);
@@ -269,7 +269,7 @@ namespace Microsoft.Boogie.Clustering
           VCExpressionGenerator gen)
         {
           Contract.Requires(gen != null);
-          Contract.Requires(cce.NonNullDictionaryAndValues(globalVars));
+          Contract.Requires(Cce.NonNullDictionaryAndValues(globalVars));
           AntiUnificationVisitor /*!*/
             visitor = new AntiUnificationVisitor(gen);
           Generator = (VCExprNAry) visitor.AntiUnify(a.Generator, b.Generator);
@@ -284,7 +284,7 @@ namespace Microsoft.Boogie.Clustering
       {
         Contract.Requires(gen != null);
         Contract.Requires(clusters != null);
-        Contract.Requires(cce.NonNullDictionaryAndValues(globalVars));
+        Contract.Requires(Cce.NonNullDictionaryAndValues(globalVars));
         List<Cluster> c = new List<Cluster>();
         c.AddRange(clusters);
         Clusters = c;
@@ -438,7 +438,7 @@ namespace Microsoft.Boogie.Clustering
     void ObjectInvariant()
     {
       Contract.Invariant(Gen != null);
-      Contract.Invariant(cce.NonNullDictionaryAndValues(Representation));
+      Contract.Invariant(Cce.NonNullDictionaryAndValues(Representation));
     }
 
 
@@ -503,11 +503,11 @@ namespace Microsoft.Boogie.Clustering
 
     public bool RepresentationIsRenaming(IDictionary<VCExprVar /*!*/, VCExprVar /*!*/> /*!*/ globalVars)
     {
-      Contract.Requires(cce.NonNullDictionaryAndValues(globalVars));
+      Contract.Requires(Cce.NonNullDictionaryAndValues(globalVars));
       if (!Representation.Any(pair =>
         pair.Key.Expr0 is VCExprVar && pair.Key.Expr1 is VCExprVar &&
-        !globalVars.ContainsKey(cce.NonNull((VCExprVar) pair.Key.Expr0)) &&
-        !globalVars.ContainsKey(cce.NonNull((VCExprVar /*!*/) pair.Key.Expr1))))
+        !globalVars.ContainsKey(Cce.NonNull((VCExprVar) pair.Key.Expr0)) &&
+        !globalVars.ContainsKey(Cce.NonNull((VCExprVar /*!*/) pair.Key.Expr1))))
       {
         return false;
       }
@@ -522,7 +522,7 @@ namespace Microsoft.Boogie.Clustering
     public void RepresentationSize(IDictionary<VCExprVar /*!*/, VCExprVar /*!*/> /*!*/ globalVars, out int expr0Size,
       out int expr1Size)
     {
-      Contract.Requires(cce.NonNullDictionaryAndValues(globalVars));
+      Contract.Requires(Cce.NonNullDictionaryAndValues(globalVars));
       ReprSizeComputingVisitor /*!*/
         size0Visitor = new ReprSizeComputingVisitor();
       ReprSizeComputingVisitor /*!*/
@@ -564,7 +564,7 @@ namespace Microsoft.Boogie.Clustering
         Representation.Add(pair, repr);
       }
 
-      return cce.NonNull(repr);
+      return Cce.NonNull(repr);
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -626,7 +626,7 @@ namespace Microsoft.Boogie.Clustering
       //Contract.Requires(node != null);
       Contract.Ensures(Contract.Result<VCExpr>() != null);
       Contract.Assert(false);
-      throw new cce.UnreachableException(); // not handled here      
+      throw new Cce.UnreachableException(); // not handled here      
     }
   }
 
@@ -642,7 +642,7 @@ namespace Microsoft.Boogie.Clustering
     public void ComputeSize(VCExpr expr, IDictionary<VCExprVar /*!*/, VCExprVar /*!*/> /*!*/ globalVars)
     {
       Contract.Requires(expr != null);
-      Contract.Requires(cce.NonNullDictionaryAndValues(globalVars));
+      Contract.Requires(Cce.NonNullDictionaryAndValues(globalVars));
       Traverse(expr, globalVars);
     }
 

@@ -19,8 +19,8 @@ public class SmokeTester
     Contract.Invariant(parent != null);
     Contract.Invariant(run != null);
     Contract.Invariant(initial != null);
-    Contract.Invariant(cce.NonNullDictionaryAndValues(copies));
-    Contract.Invariant(cce.NonNull(visited));
+    Contract.Invariant(Cce.NonNullDictionaryAndValues(copies));
+    Contract.Invariant(Cce.NonNull(visited));
     Contract.Invariant(callback != null);
   }
 
@@ -83,14 +83,14 @@ public class SmokeTester
 
     if (copies.TryGetValue(b, out var fake_res))
     {
-      return cce.NonNull(fake_res);
+      return Cce.NonNull(fake_res);
     }
 
     Block res = new Block(b.tok, b.Label, new List<Cmd>(b.Cmds), null);
     copies[b] = res;
     if (b.TransferCmd is GotoCmd)
     {
-      foreach (Block ch in cce.NonNull((GotoCmd) b.TransferCmd).labelTargets)
+      foreach (Block ch in Cce.NonNull((GotoCmd) b.TransferCmd).labelTargets)
       {
         Contract.Assert(ch != null);
         CloneBlock(ch);
@@ -115,7 +115,7 @@ public class SmokeTester
     if (copies.TryGetValue(b, out var fake_res))
     {
       // fake_res should be Block! but the compiler fails
-      return cce.NonNull(fake_res);
+      return Cce.NonNull(fake_res);
     }
 
     Block res;
@@ -147,7 +147,7 @@ public class SmokeTester
 
   List<Block> GetCopiedBlocks()
   {
-    Contract.Ensures(cce.NonNullElements(Contract.Result<List<Block>>()));
+    Contract.Ensures(Cce.NonNullElements(Contract.Result<List<Block>>()));
 
     // the order of nodes in res is random (except for the first one, being the entry)
     List<Block> res = new List<Block>();
@@ -167,12 +167,12 @@ public class SmokeTester
       {
         GotoCmd copy = new GotoCmd(go.tok, new List<String>(), new List<Block>());
         kv.Value.TransferCmd = copy;
-        foreach (Block b in cce.NonNull(go.labelTargets))
+        foreach (Block b in Cce.NonNull(go.labelTargets))
         {
           Contract.Assert(b != null);
           if (copies.TryGetValue(b, out var c))
           {
-            copy.AddTarget(cce.NonNull(c));
+            copy.AddTarget(Cce.NonNull(c));
           }
         }
       }
@@ -183,7 +183,7 @@ public class SmokeTester
       else
       {
         Contract.Assume(false);
-        throw new cce.UnreachableException();
+        throw new Cce.UnreachableException();
       }
     }
 
@@ -208,7 +208,7 @@ public class SmokeTester
     else if (call != null &&
              call.Fun is UnaryOperator &&
              ((UnaryOperator) call.Fun).Op == UnaryOperator.Opcode.Not &&
-             BooleanEval(cce.NonNull(call.Args[0]), ref val))
+             BooleanEval(Cce.NonNull(call.Args[0]), ref val))
     {
       val = !val;
       return true;
@@ -218,7 +218,7 @@ public class SmokeTester
              call.Fun is BinaryOperator &&
              ((BinaryOperator) call.Fun).Op == BinaryOperator.Opcode.Neq &&
              call.Args[0] is LiteralExpr &&
-             cce.NonNull(call.Args[0]).Equals(call.Args[1]))
+             Cce.NonNull(call.Args[0]).Equals(call.Args[1]))
     {
       val = false;
       return true;
@@ -306,7 +306,7 @@ public class SmokeTester
           Emit();
         }
       }
-      await checker.BeginCheck(cce.NonNull(Implementation.Name + "_smoke" + id++), vc, new ErrorHandler(Options, absyIds, callback),
+      await checker.BeginCheck(Cce.NonNull(Implementation.Name + "_smoke" + id++), vc, new ErrorHandler(Options, absyIds, callback),
         Options.SmokeTimeout, Options.ResourceLimit, CancellationToken.None);
 
       await checker.ProverTask;
@@ -403,7 +403,7 @@ public class SmokeTester
       }
       else if (call != null)
       {
-        foreach (Ensures e in (cce.NonNull(call.Proc)).Ensures)
+        foreach (Ensures e in (Cce.NonNull(call.Proc)).Ensures)
         {
           Contract.Assert(e != null);
           if (IsFalse(e.Condition))
@@ -428,7 +428,7 @@ public class SmokeTester
 
     Contract.Assume(!(go != null && go.labelTargets == null && go.labelNames != null && go.labelNames.Count > 0));
 
-    if (ret != null || (go != null && cce.NonNull(go.labelTargets).Count == 0))
+    if (ret != null || (go != null && Cce.NonNull(go.labelTargets).Count == 0))
     {
       // we end in return, so there will be no more places to check
       await CheckUnreachable(traceWriter, cur, seq);
@@ -438,7 +438,7 @@ public class SmokeTester
       bool needToCheck = true;
       // if all of our children have more than one parent, then
       // we're in the right place to check
-      foreach (Block target in cce.NonNull(go.labelTargets))
+      foreach (Block target in Cce.NonNull(go.labelTargets))
       {
         Contract.Assert(target != null);
         if (target.Predecessors.Count == 1)
@@ -487,7 +487,7 @@ public class SmokeTester
       Contract.Ensures(Contract.Result<Absy>() != null);
 
       int id = int.Parse(label);
-      return cce.NonNull((Absy) absyIds.GetValue(id));
+      return Cce.NonNull((Absy) absyIds.GetValue(id));
     }
 
     public override void OnProverWarning(string msg)

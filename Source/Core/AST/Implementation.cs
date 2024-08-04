@@ -117,9 +117,9 @@ public class Implementation : DeclWithFormals {
   void ObjectInvariant()
   {
     Contract.Invariant(LocVars != null);
-    Contract.Invariant(cce.NonNullElements(Blocks));
-    Contract.Invariant(cce.NonNullElements(OriginalBlocks, true));
-    Contract.Invariant(cce.NonNullElements(scc, true));
+    Contract.Invariant(Cce.NonNullElements(Blocks));
+    Contract.Invariant(Cce.NonNullElements(OriginalBlocks, true));
+    Contract.Invariant(Cce.NonNullElements(scc, true));
   }
 
   private bool BlockPredecessorsComputed;
@@ -132,7 +132,7 @@ public class Implementation : DeclWithFormals {
   public bool IsSkipVerification(CoreOptions options)
   {
     bool verify = true;
-    cce.NonNull(this.Proc).CheckBooleanAttribute("verify", ref verify);
+    Cce.NonNull(this.Proc).CheckBooleanAttribute("verify", ref verify);
     this.CheckBooleanAttribute("verify", ref verify);
     if (!verify) {
       return true;
@@ -399,7 +399,7 @@ public class Implementation : DeclWithFormals {
     List<Variable> outParams, List<Variable> localVariables, [Captured] List<Block /*!*/> block)
     : this(tok, name, typeParams, inParams, outParams, localVariables, block, null)
   {
-    Contract.Requires(cce.NonNullElements(block));
+    Contract.Requires(Cce.NonNullElements(block));
     Contract.Requires(localVariables != null);
     Contract.Requires(outParams != null);
     Contract.Requires(inParams != null);
@@ -423,7 +423,7 @@ public class Implementation : DeclWithFormals {
     Contract.Requires(inParams != null);
     Contract.Requires(outParams != null);
     Contract.Requires(localVariables != null);
-    Contract.Requires(cce.NonNullElements(blocks));
+    Contract.Requires(Cce.NonNullElements(blocks));
     LocVars = localVariables;
     Blocks = blocks;
     BlockPredecessorsComputed = false;
@@ -509,7 +509,7 @@ public class Implementation : DeclWithFormals {
       return;
     }
 
-    Proc = rc.LookUpProcedure(cce.NonNull(this.Name));
+    Proc = rc.LookUpProcedure(Cce.NonNull(this.Name));
     if (Proc == null)
     {
       rc.Error(this, "implementation given for undeclared procedure: {0}", this.Name);
@@ -741,15 +741,15 @@ public class Implementation : DeclWithFormals {
         // the names of the formals are allowed to change from the proc to the impl
 
         // but types must be identical
-        Type t = cce.NonNull((Variable) implFormals[i]).TypedIdent.Type.Substitute(subst2);
-        Type u = cce.NonNull((Variable) procFormals[i]).TypedIdent.Type.Substitute(subst1);
+        Type t = Cce.NonNull((Variable) implFormals[i]).TypedIdent.Type.Substitute(subst2);
+        Type u = Cce.NonNull((Variable) procFormals[i]).TypedIdent.Type.Substitute(subst1);
         if (!t.Equals(u))
         {
           string /*!*/
-            a = cce.NonNull((Variable) implFormals[i]).Name;
+            a = Cce.NonNull((Variable) implFormals[i]).Name;
           Contract.Assert(a != null);
           string /*!*/
-            b = cce.NonNull((Variable) procFormals[i]).Name;
+            b = Cce.NonNull((Variable) procFormals[i]).Name;
           Contract.Assert(b != null);
           string /*!*/
             c;
@@ -807,9 +807,9 @@ public class Implementation : DeclWithFormals {
       for (int i = 0; i < OutParams.Count; i++)
       {
         Variable /*!*/
-          v = cce.NonNull(OutParams[i]);
+          v = Cce.NonNull(OutParams[i]);
         IdentifierExpr ie = new IdentifierExpr(v.tok, v);
-        Variable pv = cce.NonNull(Proc.OutParams[i]);
+        Variable pv = Cce.NonNull(Proc.OutParams[i]);
         map.Add(pv, ie);
       }
 
@@ -823,9 +823,9 @@ public class Implementation : DeclWithFormals {
         foreach (var e in map)
         {
           options.OutputWriter.Write("  ");
-          cce.NonNull((Variable /*!*/) e.Key).Emit(stream, 0);
+          Cce.NonNull((Variable /*!*/) e.Key).Emit(stream, 0);
           options.OutputWriter.Write("  --> ");
-          cce.NonNull((Expr) e.Value).Emit(stream);
+          Cce.NonNull((Expr) e.Value).Emit(stream);
           options.OutputWriter.WriteLine();
         }
       }
@@ -841,7 +841,7 @@ public class Implementation : DeclWithFormals {
   public ICollection<Block /*!*/> GetConnectedComponents(Block startingBlock)
   {
     Contract.Requires(startingBlock != null);
-    Contract.Ensures(cce.NonNullElements(Contract.Result<ICollection<Block>>(), true));
+    Contract.Ensures(Cce.NonNullElements(Contract.Result<ICollection<Block>>(), true));
     Contract.Assert(this.Blocks.Contains(startingBlock));
 
     if (!this.BlockPredecessorsComputed)
@@ -853,7 +853,7 @@ public class Implementation : DeclWithFormals {
       System.Console.WriteLine("* Strongly connected components * \n{0} \n ** ", scc);
 #endif
 
-    foreach (ICollection<Block /*!*/> component in cce.NonNull(this.scc))
+    foreach (ICollection<Block /*!*/> component in Cce.NonNull(this.scc))
     {
       foreach (Block /*!*/ b in component)
       {
@@ -867,7 +867,7 @@ public class Implementation : DeclWithFormals {
 
     {
       Contract.Assert(false);
-      throw new cce.UnreachableException();
+      throw new Cce.UnreachableException();
     } // if we are here, it means that the block is not in one of the components. This is an error.
   }
 

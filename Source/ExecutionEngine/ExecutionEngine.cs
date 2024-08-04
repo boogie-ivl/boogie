@@ -91,7 +91,7 @@ namespace Microsoft.Boogie
 
     public async Task<bool> ProcessFiles(TextWriter output, IList<string> fileNames, bool lookForSnapshots = true,
       string programId = null) {
-      Contract.Requires(cce.NonNullElements(fileNames));
+      Contract.Requires(Cce.NonNullElements(fileNames));
 
       if (Options.VerifySeparately && 1 < fileNames.Count) {
         var success = true;
@@ -283,7 +283,7 @@ namespace Microsoft.Boogie
     /// </summary>
     public Program ParseBoogieProgram(IList<string> fileNames, bool suppressTraceOutput)
     {
-      Contract.Requires(cce.NonNullElements(fileNames));
+      Contract.Requires(Cce.NonNullElements(fileNames));
 
       Program program = new Program();
       bool okay = true;
@@ -470,7 +470,7 @@ namespace Microsoft.Boogie
       }
 
       // Inline
-      var TopLevelDeclarations = cce.NonNull(program.TopLevelDeclarations);
+      var TopLevelDeclarations = Cce.NonNull(program.TopLevelDeclarations);
 
       if (Options.ProcedureInlining != CoreOptions.Inlining.None)
       {
@@ -632,7 +632,7 @@ namespace Microsoft.Boogie
     private Implementation[] GetPrioritizedImplementations(Program program)
     {
       var impls = program.Implementations.Where(
-        impl => impl != null && Options.UserWantsToCheckRoutine(cce.NonNull(impl.VerboseName)) &&
+        impl => impl != null && Options.UserWantsToCheckRoutine(Cce.NonNull(impl.VerboseName)) &&
                 !impl.IsSkipVerification(Options)).ToArray();
 
       // operate on a stable copy, in case it gets updated while we're running
@@ -695,7 +695,7 @@ namespace Microsoft.Boogie
               .OrderBy(s => s)));
       }
 
-      cce.NonNull(Options.TheProverFactory).Close();
+      Cce.NonNull(Options.TheProverFactory).Close();
 
       return outcome;
 
@@ -1227,7 +1227,7 @@ namespace Microsoft.Boogie
       {
         default:
           Contract.Assert(false); // unexpected outcome
-          throw new cce.UnreachableException();
+          throw new Cce.UnreachableException();
         case VcOutcome.ReachedBound:
           traceOutput = "verified";
           break;
@@ -1267,7 +1267,7 @@ namespace Microsoft.Boogie
       {
         default:
           Contract.Assert(false); // unexpected outcome
-          throw new cce.UnreachableException();
+          throw new Cce.UnreachableException();
         case VcOutcome.ReachedBound:
           Interlocked.Increment(ref stats.VerifiedCount);
 
@@ -1311,7 +1311,7 @@ namespace Microsoft.Boogie
       {
         default:
           Contract.Assert(false); // unexpected outcome
-          throw new cce.UnreachableException();
+          throw new Cce.UnreachableException();
         case VcOutcome.ReachedBound:
           Interlocked.Increment(ref stats.CachedVerifiedCount);
 

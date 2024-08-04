@@ -62,7 +62,7 @@ namespace Microsoft.Boogie.VCExprAST
       else
       {
         Contract.Assert(false);
-        throw new cce.UnreachableException();
+        throw new Cce.UnreachableException();
       }
 
       return true;
@@ -92,7 +92,7 @@ namespace Microsoft.Boogie.VCExprAST
           if (naryExpr == null || !naryExpr.Op.Equals(op))
           {
             wr.Write(" ");
-            Print(cce.NonNull((VCExpr /*!*/) enumerator.Current), wr);
+            Print(Cce.NonNull((VCExpr /*!*/) enumerator.Current), wr);
           }
         }
 
@@ -270,7 +270,7 @@ namespace Microsoft.Boogie.VCExprAST
       //Contract.Requires(wr != null);
       //Contract.Requires(node != null);
       Contract.Assert(false);
-      throw new cce.UnreachableException();
+      throw new Cce.UnreachableException();
     }
 
     public bool VisitOrOp(VCExprNAry node, TextWriter wr)
@@ -278,7 +278,7 @@ namespace Microsoft.Boogie.VCExprAST
       //Contract.Requires(wr != null);
       //Contract.Requires(node != null);
       Contract.Assert(false);
-      throw new cce.UnreachableException();
+      throw new Cce.UnreachableException();
     }
 
     public bool VisitImpliesOp(VCExprNAry node, TextWriter wr)

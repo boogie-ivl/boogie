@@ -43,7 +43,7 @@ public sealed class Block : Absy
   {
     if (TransferCmd is GotoCmd g)
     {
-      return cce.NonNull(g.labelTargets);
+      return Cce.NonNull(g.labelTargets);
     }
     return new List<Block>();
   }
@@ -85,7 +85,7 @@ public sealed class Block : Absy
   {
     get
     {
-      Contract.Ensures(cce.NonNullElements(Contract.Result<IEnumerable<Variable /*!*/>>(), true));
+      Contract.Ensures(Cce.NonNullElements(Contract.Result<IEnumerable<Variable /*!*/>>(), true));
       if (this._liveVarsBefore == null)
       {
         return null;
@@ -97,7 +97,7 @@ public sealed class Block : Absy
     }
     set
     {
-      Contract.Requires(cce.NonNullElements(value, true));
+      Contract.Requires(Cce.NonNullElements(value, true));
       if (value == null)
       {
         this._liveVarsBefore = null;
@@ -114,7 +114,7 @@ public sealed class Block : Absy
   {
     Contract.Invariant(this.label != null);
     Contract.Invariant(this.cmds != null);
-    Contract.Invariant(cce.NonNullElements(this._liveVarsBefore, true));
+    Contract.Invariant(Cce.NonNullElements(this._liveVarsBefore, true));
   }
 
   public bool IsLive(Variable v)

@@ -43,7 +43,7 @@ namespace Microsoft.Boogie
         Close();
       }
 
-      cce.BeginExpose(this);
+      Cce.BeginExpose(this);
       XmlWriterSettings settings = new XmlWriterSettings();
       settings.Indent = true;
       wr = XmlWriter.Create(filename, settings);
@@ -51,7 +51,7 @@ namespace Microsoft.Boogie
       wr.WriteStartElement("boogie");
       wr.WriteAttributeString("version", options.VersionNumber);
       wr.WriteAttributeString("commandLine", Environment.CommandLine);
-      cce.EndExpose();
+      Cce.EndExpose();
       return null; // success
     }
 
@@ -60,13 +60,13 @@ namespace Microsoft.Boogie
       //modifies this.*;
       if (wr != null)
       {
-        cce.BeginExpose(this);
+        Cce.BeginExpose(this);
         {
           wr.WriteEndDocument();
           wr.Close();
           wr = null;
         }
-        cce.EndExpose();
+        Cce.EndExpose();
       }
     }
 
@@ -79,11 +79,11 @@ namespace Microsoft.Boogie
       //modifies this.*;
       Contract.Ensures(IsOpen);
       Contract.Assert(wr != null);
-      cce.BeginExpose(this);
+      Cce.BeginExpose(this);
       wr.WriteStartElement("method");
       wr.WriteAttributeString("name", methodName);
       wr.WriteAttributeString("startTime", startTime.ToString(DateTimeFormatString));
-      cce.EndExpose();
+      Cce.EndExpose();
     }
 
     public void WriteEndMethod(string outcome, DateTime endTime, TimeSpan elapsed, int? resourceCount)
@@ -93,7 +93,7 @@ namespace Microsoft.Boogie
       //modifies this.*;
       Contract.Ensures(IsOpen);
       Contract.Assert(wr != null);
-      cce.BeginExpose(this);
+      Cce.BeginExpose(this);
       {
         wr.WriteStartElement("conclusion");
         wr.WriteAttributeString("endTime", endTime.ToString(DateTimeFormatString));
@@ -108,7 +108,7 @@ namespace Microsoft.Boogie
         wr.WriteEndElement(); // outcome
         wr.WriteEndElement(); // method
       }
-      cce.EndExpose();
+      Cce.EndExpose();
     }
 
     public void WriteSplit(int splitNum, int iteration, IEnumerable<AssertCmd> asserts, DateTime startTime,
@@ -121,7 +121,7 @@ namespace Microsoft.Boogie
       Contract.Ensures(IsOpen);
       Contract.Assert(wr != null);
 
-      cce.BeginExpose(this);
+      Cce.BeginExpose(this);
       {
         wr.WriteStartElement("assertionBatch");
         wr.WriteAttributeString("number", splitNum.ToString());
@@ -149,18 +149,18 @@ namespace Microsoft.Boogie
 
         wr.WriteEndElement(); // assertionBatch
       }
-      cce.EndExpose();
+      Cce.EndExpose();
     }
     
     public void WriteError(string message, IToken errorToken, IToken relatedToken, List<Block> trace)
     {
       Contract.Requires(errorToken != null);
       Contract.Requires(message != null);
-      Contract.Requires(IsOpen && (trace == null || cce.Owner.Different(this, trace)));
+      Contract.Requires(IsOpen && (trace == null || Cce.Owner.Different(this, trace)));
       //modifies this.*, errorToken.*, relatedToken.*, trace.*;
       Contract.Ensures(IsOpen);
       Contract.Assert(wr != null);
-      cce.BeginExpose(this);
+      Cce.BeginExpose(this);
       {
         wr.WriteStartElement("error");
         wr.WriteAttributeString("message", message);
@@ -178,7 +178,7 @@ namespace Microsoft.Boogie
           {
             foreach (object bo in trace)
             {
-              cce.LoopInvariant(wr != null);
+              Cce.LoopInvariant(wr != null);
               Contract.Assume(bo is Block);
               Block b = (Block) bo;
               wr.WriteStartElement("traceNode");
@@ -195,7 +195,7 @@ namespace Microsoft.Boogie
 
         wr.WriteEndElement();
       }
-      cce.EndExpose();
+      Cce.EndExpose();
     }
 
 #if CCI
@@ -238,7 +238,7 @@ namespace Microsoft.Boogie
     [Inside]
     private void WriteTokenAttributes(IToken tok)
     {
-      Contract.Requires(wr != null && cce.IsPeerConsistent(wr));
+      Contract.Requires(wr != null && Cce.IsPeerConsistent(wr));
       //modifies this.0, wr.*;
       if (tok != null && tok.filename != null)
       {
@@ -270,12 +270,12 @@ namespace Microsoft.Boogie
       //modifies this.*;
       Contract.Ensures(IsOpen);
       Contract.Assert(wr != null);
-      cce.BeginExpose(this);
+      Cce.BeginExpose(this);
       {
         wr.WriteStartElement("inference");
         wr.WriteAttributeString("name", inferenceName);
       }
-      cce.EndExpose();
+      Cce.EndExpose();
     }
 
     public void WriteEndInference()
@@ -284,11 +284,11 @@ namespace Microsoft.Boogie
       //modifies this.*;
       Contract.Ensures(IsOpen);
       Contract.Assert(wr != null);
-      cce.BeginExpose(this);
+      Cce.BeginExpose(this);
       {
         wr.WriteEndElement(); // inference
       }
-      cce.EndExpose();
+      Cce.EndExpose();
     }
 
     public void WriteContractParaAssignment(string varName, string val)
@@ -298,14 +298,14 @@ namespace Microsoft.Boogie
       //modifies this.*;
       Contract.Ensures(IsOpen);
       Contract.Assert(wr != null);
-      cce.BeginExpose(this);
+      Cce.BeginExpose(this);
       {
         wr.WriteStartElement("assignment");
         wr.WriteAttributeString("name", varName);
         wr.WriteAttributeString("value", val);
         wr.WriteEndElement();
       }
-      cce.EndExpose();
+      Cce.EndExpose();
     }
 
     public void WriteStartFile(string filename)
@@ -315,12 +315,12 @@ namespace Microsoft.Boogie
       //modifies this.*;
       Contract.Ensures(IsOpen);
       Contract.Assert(wr != null);
-      cce.BeginExpose(this);
+      Cce.BeginExpose(this);
       {
         wr.WriteStartElement("file");
         wr.WriteAttributeString("name", filename);
       }
-      cce.EndExpose();
+      Cce.EndExpose();
     }
 
     public void WriteEndFile()
@@ -329,11 +329,11 @@ namespace Microsoft.Boogie
       //modifies this.*;
       Contract.Ensures(IsOpen);
       Contract.Assert(wr != null);
-      cce.BeginExpose(this);
+      Cce.BeginExpose(this);
       {
         wr.WriteEndElement();
       }
-      cce.EndExpose();
+      Cce.EndExpose();
     }
 
     public void WriteFileFragment(string fragment)
@@ -343,13 +343,13 @@ namespace Microsoft.Boogie
       //modifies this.*;
       Contract.Ensures(IsOpen);
       Contract.Assert(wr != null);
-      cce.BeginExpose(this);
+      Cce.BeginExpose(this);
       {
         wr.WriteStartElement("fileFragment");
         wr.WriteAttributeString("name", fragment);
         wr.WriteEndElement();
       }
-      cce.EndExpose();
+      Cce.EndExpose();
     }
   }
 
@@ -366,7 +366,7 @@ namespace Microsoft.Boogie
       if (sink != null)
       {
         sink.WriteStartFile(filename); // invoke this method while "sink" is still peer consistent
-        cce.Owner.AssignSame(this, sink);
+        Cce.Owner.AssignSame(this, sink);
         this.sink = sink;
       }
     }

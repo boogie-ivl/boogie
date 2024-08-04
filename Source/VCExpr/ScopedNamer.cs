@@ -60,19 +60,19 @@ namespace Microsoft.Boogie.VCExprAST
     [ContractInvariantMethod]
     private void GlobalNamesInvariantMethod()
     {
-      Contract.Invariant(cce.NonNullDictionaryAndValues(GlobalNames));
+      Contract.Invariant(Cce.NonNullDictionaryAndValues(GlobalNames));
     }
 
     [ContractInvariantMethod]
     private void LocalNamesInvariantMethod()
     {
-      Contract.Invariant(Contract.ForAll(LocalNames, i => i != null && cce.NonNullDictionaryAndValues(i)));
+      Contract.Invariant(Contract.ForAll(LocalNames, i => i != null && Cce.NonNullDictionaryAndValues(i)));
     }
 
     [ContractInvariantMethod]
     private void UsedNamesInvariantMethod()
     {
-      Contract.Invariant(cce.NonNull(UsedNames));
+      Contract.Invariant(Cce.NonNull(UsedNames));
     }
 
     [ContractInvariantMethod]
@@ -84,7 +84,7 @@ namespace Microsoft.Boogie.VCExprAST
     [ContractInvariantMethod]
     private void GlobalPlusLocalNamesInvariantMethod()
     {
-      Contract.Invariant(cce.NonNullDictionaryAndValues(GlobalPlusLocalNames));
+      Contract.Invariant(Cce.NonNullDictionaryAndValues(GlobalPlusLocalNames));
     }
 
     public void PushScope()

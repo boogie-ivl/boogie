@@ -18,44 +18,44 @@ namespace Microsoft.Boogie
     public static void Compute(Program program)
     {
       Contract.Requires(program != null);
-      cce.BeginExpose(program);
+      Cce.BeginExpose(program);
 
       foreach (var impl in program.Implementations)
       {
         if (impl.Blocks != null && impl.Blocks.Count > 0)
         {
-          Contract.Assume(cce.IsConsistent(impl));
-          cce.BeginExpose(impl);
+          Contract.Assume(Cce.IsConsistent(impl));
+          Cce.BeginExpose(impl);
           Block start = impl.Blocks[0];
           Contract.Assume(start != null);
-          Contract.Assume(cce.IsConsistent(start));
+          Contract.Assume(Cce.IsConsistent(start));
           Visit(start);
 
           // We reset the state...
           foreach (Block b in impl.Blocks)
           {
-            cce.BeginExpose(b);
+            Cce.BeginExpose(b);
             b.TraversingStatus = Block.VisitState.ToVisit;
-            cce.EndExpose();
+            Cce.EndExpose();
           }
 
-          cce.EndExpose();
+          Cce.EndExpose();
         }
       }
 
-      cce.EndExpose();
+      Cce.EndExpose();
     }
 
     static void Visit(Block b)
     {
       Contract.Requires(b != null);
-      Contract.Assume(cce.IsExposable(b));
+      Contract.Assume(Cce.IsExposable(b));
       if (b.TraversingStatus == Block.VisitState.BeingVisited)
       {
-        cce.BeginExpose(b);
+        Cce.BeginExpose(b);
         // we got here through a back-edge
         b.widenBlock = true;
-        cce.EndExpose();
+        Cce.EndExpose();
       }
       else if (b.TraversingStatus == Block.VisitState.AlreadyVisited)
       {
@@ -66,15 +66,15 @@ namespace Microsoft.Boogie
         Contract.Assert(b.TraversingStatus == Block.VisitState.ToVisit);
 
         GotoCmd g = (GotoCmd) b.TransferCmd;
-        cce.BeginExpose(b);
+        Cce.BeginExpose(b);
 
-        cce.BeginExpose(g); //PM: required for the subsequent expose (g.labelTargets)
+        Cce.BeginExpose(g); //PM: required for the subsequent expose (g.labelTargets)
         b.TraversingStatus = Block.VisitState.BeingVisited;
 
         // labelTargets is made non-null by Resolve, which we assume
         // has already called in a prior pass.
         Contract.Assume(g.labelTargets != null);
-        cce.BeginExpose(g.labelTargets);
+        Cce.BeginExpose(g.labelTargets);
         foreach (Block succ in g.labelTargets)
           //              invariant b.currentlyTraversed;
           //PM: The following loop invariant will work once properties are axiomatized
@@ -84,7 +84,7 @@ namespace Microsoft.Boogie
           Visit(succ);
         }
 
-        cce.EndExpose();
+        Cce.EndExpose();
 
         Contract.Assert(b.TraversingStatus == Block.VisitState.BeingVisited);
         //            System.Diagnostics.Debug.Assert(b.currentlyTraversed);
@@ -94,7 +94,7 @@ namespace Microsoft.Boogie
         //PM: The folowing assumption is needed because we cannot prove that a simple field update
         //PM: leaves the value of a property unchanged.
         Contract.Assume(g.labelNames == null || g.labelNames.Count == g.labelTargets.Count);
-        cce.EndExpose();
+        Cce.EndExpose();
       }
       else
       {
@@ -113,7 +113,7 @@ namespace Microsoft.Boogie
     {
       Contract.Requires(block.widenBlock);
       Contract.Requires(block != null);
-      Contract.Ensures(cce.NonNullElements(Contract.Result<List<Block>>()));
+      Contract.Ensures(Cce.NonNullElements(Contract.Result<List<Block>>()));
 
       Contract.Assert(rootBlock == null);
       rootBlock = block;
@@ -141,8 +141,8 @@ namespace Microsoft.Boogie
     private static void DoDFSVisit(Block block, List<Block> path, List<Block> blocksInPath)
     {
       Contract.Requires(block != null);
-      Contract.Requires(cce.NonNullElements(path));
-      Contract.Requires(cce.NonNullElements(path));
+      Contract.Requires(Cce.NonNullElements(path));
+      Contract.Requires(Cce.NonNullElements(path));
 
       #region case 1. We visit the root => We are done, "path" is a path inside the loop
 

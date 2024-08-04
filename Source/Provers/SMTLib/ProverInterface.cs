@@ -27,7 +27,7 @@ public abstract class ProverInterface
   {
     Contract.Requires(prog != null);
 
-    ProverOptions options = cce.NonNull(libOptions.TheProverFactory).BlankProverOptions(libOptions);
+    ProverOptions options = Cce.NonNull(libOptions.TheProverFactory).BlankProverOptions(libOptions);
 
     if (logFilePath != null)
     {
@@ -125,7 +125,7 @@ public abstract class ProverInterface
 
     public virtual void OnModel(IList<string> labels, Model model, SolverOutcome proverOutcome)
     {
-      Contract.Requires(cce.NonNullElements(labels));
+      Contract.Requires(Cce.NonNullElements(labels));
     }
 
     public virtual void OnResourceExceeded(string message,
@@ -149,7 +149,7 @@ public abstract class ProverInterface
           break;
         default:
           Contract.Assume(false);
-          throw new cce.UnreachableException(); // unexpected case
+          throw new Cce.UnreachableException(); // unexpected case
       }
     }
 

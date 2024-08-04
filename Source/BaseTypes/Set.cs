@@ -273,7 +273,7 @@ namespace Microsoft.Boogie
       Contract.Ensures(Contract.Result<GSet<T>>() != null);
       //Contract.Ensures(Contract.ForAll(result, x => a[x] && b[x] ));
       GSet<T> /*!*/
-        res = (GSet<T> /*!*/) cce.NonNull(a.Clone());
+        res = (GSet<T> /*!*/) Cce.NonNull(a.Clone());
       res.Intersect(b);
       return res;
     }
@@ -286,7 +286,7 @@ namespace Microsoft.Boogie
       Contract.Ensures(Contract.Result<GSet<T>>() != null);
       //  Contract.Ensures(Contract.ForAll(result, x => a[x] || b[x] ));
       GSet<T> /*!*/
-        res = (GSet<T> /*!*/) cce.NonNull(a.Clone());
+        res = (GSet<T> /*!*/) Cce.NonNull(a.Clone());
       res.AddRange(b);
       return res;
     }

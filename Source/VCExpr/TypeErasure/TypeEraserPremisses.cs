@@ -86,7 +86,7 @@ public class TypeEraserPremisses : TypeEraser
     List<VCExprVar /*!*/> /*!*/
       newBoundVars =
         BoundVarsAfterErasure(occurringVars, bindings);
-    Contract.Assert(cce.NonNullElements(newBoundVars));
+    Contract.Assert(Cce.NonNullElements(newBoundVars));
     VCExpr /*!*/
       newNode = HandleQuantifier(node, occurringVars,
         newBoundVars, bindings);
@@ -114,11 +114,11 @@ public class TypeEraserPremisses : TypeEraser
     List<VCExprLetBinding /*!*/> /*!*/ typeVarBindings,
     out List<VCTrigger /*!*/> /*!*/ triggers)
   {
-    Contract.Requires(cce.NonNullElements(oldBoundVars));
-    Contract.Requires(cce.NonNullElements(newBoundVars));
-    Contract.Requires(cce.NonNullDictionaryAndValues(typeVarTranslation));
-    Contract.Requires(cce.NonNullElements(typeVarBindings));
-    Contract.Ensures(cce.NonNullElements(Contract.ValueAtReturn(out triggers)));
+    Contract.Requires(Cce.NonNullElements(oldBoundVars));
+    Contract.Requires(Cce.NonNullElements(newBoundVars));
+    Contract.Requires(Cce.NonNullDictionaryAndValues(typeVarTranslation));
+    Contract.Requires(Cce.NonNullElements(typeVarBindings));
+    Contract.Ensures(Cce.NonNullElements(Contract.ValueAtReturn(out triggers)));
     Contract.Ensures(Contract.Result<VCExpr>() != null);
 
     // build a substitution of the type variables that it can be checked
@@ -200,8 +200,8 @@ public class TypeEraserPremisses : TypeEraser
   {
     Contract.Requires(bindings != null);
     Contract.Requires(node != null);
-    Contract.Requires(cce.NonNullElements(occurringVars /*!*/));
-    Contract.Requires(cce.NonNullElements(newBoundVars));
+    Contract.Requires(Cce.NonNullElements(occurringVars /*!*/));
+    Contract.Requires(Cce.NonNullElements(newBoundVars));
     Contract.Ensures(Contract.Result<VCExpr>() != null);
     List<VCExprLetBinding /*!*/> /*!*/
       typeVarBindings =
@@ -246,11 +246,11 @@ public class TypeEraserPremisses : TypeEraser
           bindings.TypeVariableBindings,
           typeVarBindings, out var furtherTriggers);
 
-    Contract.Assert(cce.NonNullElements(furtherTriggers));
+    Contract.Assert(Cce.NonNullElements(furtherTriggers));
     Contract.Assert(typePremisses != null);
     List<VCTrigger /*!*/> /*!*/
       newTriggers = new List<VCTrigger>(MutateTriggers(node.Triggers, bindings));
-    Contract.Assert(cce.NonNullElements(newTriggers));
+    Contract.Assert(Cce.NonNullElements(newTriggers));
     newTriggers.AddRange(furtherTriggers);
     newTriggers = AddLets2Triggers(newTriggers, typeVarBindings);
 
@@ -291,9 +291,9 @@ public class TypeEraserPremisses : TypeEraser
   private List<VCTrigger /*!*/> /*!*/ AddLets2Triggers(List<VCTrigger /*!*/> /*!*/ triggers /*!*/,
     List<VCExprLetBinding /*!*/> /*!*/ typeVarBindings)
   {
-    Contract.Requires(cce.NonNullElements(triggers /*!*/));
-    Contract.Requires(cce.NonNullElements(typeVarBindings));
-    Contract.Ensures(cce.NonNullElements(Contract.Result<List<VCTrigger>>()));
+    Contract.Requires(Cce.NonNullElements(triggers /*!*/));
+    Contract.Requires(Cce.NonNullElements(typeVarBindings));
+    Contract.Ensures(Cce.NonNullElements(Contract.Result<List<VCTrigger>>()));
     List<VCTrigger /*!*/> /*!*/
       triggersWithLets = new List<VCTrigger /*!*/>(triggers.Count);
 
@@ -308,7 +308,7 @@ public class TypeEraserPremisses : TypeEraser
       {
         Contract.Assert(e != null);
         HashSet<VCExprVar> freeVars = FreeVariableCollector.FreeTermVariables(e);
-        Contract.Assert(freeVars != null && cce.NonNullElements(freeVars));
+        Contract.Assert(freeVars != null && Cce.NonNullElements(freeVars));
         if (typeVarBindings.Any(b => freeVars.Contains(b.V)))
         {
           exprsWithLets.Add(Gen.Let(typeVarBindings, e));

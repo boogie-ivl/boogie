@@ -23,7 +23,7 @@ namespace Microsoft.Boogie.VCExprAST
     private List<VCExprVar /*!*/> /*!*/ FreeVarsIn(VCExpr expr)
     {
       Contract.Requires(expr != null);
-      Contract.Ensures(cce.NonNullElements(Contract.Result<List<VCExprVar>>()));
+      Contract.Ensures(Cce.NonNullElements(Contract.Result<List<VCExprVar>>()));
       FreeVarCollector.Collect(expr);
       List<VCExprVar /*!*/> /*!*/
         freeVars = new List<VCExprVar /*!*/>(FreeVarCollector.FreeTermVars);
@@ -57,7 +57,7 @@ namespace Microsoft.Boogie.VCExprAST
       // generate the occurrence edges
       foreach (KeyValuePair<VCExprVar /*!*/, Binding /*!*/> pair in boundVars)
       {
-        Contract.Assert(cce.NonNullElements(pair));
+        Contract.Assert(Cce.NonNullElements(pair));
         Binding /*!*/
           b = pair.Value;
         Contract.Assert(b != null);
@@ -66,7 +66,7 @@ namespace Microsoft.Boogie.VCExprAST
           Contract.Assert(v != null);
           if (boundVars.TryGetValue(v, out var b2))
           {
-            cce.NonNull(b2).Occurrences.Add(b);
+            Cce.NonNull(b2).Occurrences.Add(b);
             b.InvOccurrencesNum = b.InvOccurrencesNum + 1;
           }
         }
@@ -76,7 +76,7 @@ namespace Microsoft.Boogie.VCExprAST
       Stack<Binding /*!*/> rootBindings = new Stack<Binding /*!*/>();
       foreach (KeyValuePair<VCExprVar /*!*/, Binding /*!*/> pair in boundVars)
       {
-        Contract.Assert(cce.NonNullElements(pair));
+        Contract.Assert(Cce.NonNullElements(pair));
         if (pair.Value.InvOccurrencesNum == 0)
         {
           rootBindings.Push(pair.Value);
@@ -171,7 +171,7 @@ namespace Microsoft.Boogie.VCExprAST
       {
         Contract.Invariant(V != null);
         Contract.Invariant(E != null);
-        Contract.Invariant(cce.NonNullElements(FreeVars));
+        Contract.Invariant(Cce.NonNullElements(FreeVars));
         Contract.Invariant(Occurrences != null);
       }
 
@@ -190,7 +190,7 @@ namespace Microsoft.Boogie.VCExprAST
       {
         Contract.Requires(e != null);
         Contract.Requires(v != null);
-        Contract.Requires(cce.NonNullElements(freeVars));
+        Contract.Requires(Cce.NonNullElements(freeVars));
         this.V = v;
         this.E = e;
         this.FreeVars = freeVars;

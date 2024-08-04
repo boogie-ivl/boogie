@@ -104,7 +104,7 @@ namespace Microsoft.Boogie.TypeErasure
     [ContractInvariantMethod]
     void Typed2UntypedFunctionsInvariantMethod()
     {
-      Contract.Invariant(cce.NonNullDictionaryAndValues(Typed2UntypedFunctions));
+      Contract.Invariant(Cce.NonNullDictionaryAndValues(Typed2UntypedFunctions));
     }
 
     public Function Typed2Untyped(Function fun)
@@ -117,8 +117,8 @@ namespace Microsoft.Boogie.TypeErasure
 
         // if all of the parameters are int or bool, the function does
         // not have to be changed
-        if (fun.InParams.All(param => UnchangedType(cce.NonNull(param).TypedIdent.Type)) &&
-            UnchangedType(cce.NonNull(fun.OutParams[0]).TypedIdent.Type))
+        if (fun.InParams.All(param => UnchangedType(Cce.NonNull(param).TypedIdent.Type)) &&
+            UnchangedType(Cce.NonNull(fun.OutParams[0]).TypedIdent.Type))
         {
           res = fun;
         }
@@ -143,7 +143,7 @@ namespace Microsoft.Boogie.TypeErasure
             i = i + 1;
           }
 
-          types[types.Length - 1] = TypeAfterErasure(cce.NonNull(fun.OutParams[0]).TypedIdent.Type);
+          types[types.Length - 1] = TypeAfterErasure(Cce.NonNull(fun.OutParams[0]).TypedIdent.Type);
 
           res = HelperFuns.BoogieFunction(fun.Name, types);
           res.Attributes = fun.Attributes;
@@ -152,7 +152,7 @@ namespace Microsoft.Boogie.TypeErasure
         Typed2UntypedFunctions.Add(fun, res);
       }
 
-      return cce.NonNull(res);
+      return Cce.NonNull(res);
     }
   }
 
@@ -243,8 +243,8 @@ namespace Microsoft.Boogie.TypeErasure
       i++;
       // Fill in the map type which is the output of the store function
       storeTypes[i] = AxBuilder.U;
-      Contract.Assert(cce.NonNullElements<Type>(selectTypes));
-      Contract.Assert(cce.NonNullElements<Type>(storeTypes));
+      Contract.Assert(Cce.NonNullElements<Type>(selectTypes));
+      Contract.Assert(Cce.NonNullElements<Type>(storeTypes));
 
       select = HelperFuns.BoogieFunction(baseName + "Select", selectTypes);
       store = HelperFuns.BoogieFunction(baseName + "Store", storeTypes);
@@ -262,8 +262,8 @@ namespace Microsoft.Boogie.TypeErasure
     {
       Contract.Requires(map != null);
       Contract.Requires(select != null);
-      Contract.Requires(cce.NonNullElements(indexes));
-      Contract.Requires(cce.NonNullElements(types));
+      Contract.Requires(Cce.NonNullElements(indexes));
+      Contract.Requires(Cce.NonNullElements(types));
       Contract.Ensures(Contract.Result<VCExpr>() != null);
       List<VCExpr /*!*/> /*!*/
         selectArgs = new List<VCExpr /*!*/>();
@@ -279,8 +279,8 @@ namespace Microsoft.Boogie.TypeErasure
       Contract.Requires(val != null);
       Contract.Requires(map != null);
       Contract.Requires(store != null);
-      Contract.Requires(cce.NonNullElements(indexes));
-      Contract.Requires(cce.NonNullElements(types));
+      Contract.Requires(Cce.NonNullElements(indexes));
+      Contract.Requires(Cce.NonNullElements(types));
       Contract.Ensures(Contract.Result<VCExpr>() != null);
       List<VCExpr /*!*/> /*!*/
         storeArgs = new List<VCExpr /*!*/>();
@@ -311,7 +311,7 @@ namespace Microsoft.Boogie.TypeErasure
       List<Type /*!*/> indexTypes = new List<Type /*!*/>();
       for (int i = mapTypeParamNum + mapAbstractionVarNum + 1; i < select.InParams.Count; i++)
       {
-        indexTypes.Add(cce.NonNull(select.InParams[i]).TypedIdent.Type);
+        indexTypes.Add(Cce.NonNull(select.InParams[i]).TypedIdent.Type);
       }
 
       Contract.Assert(arity == indexTypes.Count);
@@ -323,7 +323,7 @@ namespace Microsoft.Boogie.TypeErasure
         m = Gen.Variable("m", AxBuilder.U);
       Contract.Assert(m != null);
       VCExprVar /*!*/
-        val = Gen.Variable("val", cce.NonNull(select.OutParams[0]).TypedIdent.Type);
+        val = Gen.Variable("val", Cce.NonNull(select.OutParams[0]).TypedIdent.Type);
       Contract.Assert(val != null);
 
       VCExpr /*!*/
@@ -381,7 +381,7 @@ namespace Microsoft.Boogie.TypeErasure
       List<Type /*!*/> indexTypes = new List<Type /*!*/>();
       for (int i = mapTypeParamNum + mapAbstractionVarNum + 1; i < select.InParams.Count; i++)
       {
-        indexTypes.Add(cce.NonNull(select.InParams[i]).TypedIdent.Type);
+        indexTypes.Add(Cce.NonNull(select.InParams[i]).TypedIdent.Type);
       }
 
       Contract.Assert(arity == indexTypes.Count);
@@ -395,7 +395,7 @@ namespace Microsoft.Boogie.TypeErasure
         m = Gen.Variable("m", AxBuilder.U);
       Contract.Assert(m != null);
       VCExprVar /*!*/
-        val = Gen.Variable("val", cce.NonNull(select.OutParams[0]).TypedIdent.Type);
+        val = Gen.Variable("val", Cce.NonNull(select.OutParams[0]).TypedIdent.Type);
       Contract.Assert(val != null);
 
       VCExpr /*!*/
@@ -541,8 +541,8 @@ namespace Microsoft.Boogie.TypeErasure
       List<VCExprVar /*!*/> /*!*/ newBoundVars, VariableBindings bindings)
     {
       Contract.Requires(bindings != null);
-      Contract.Requires(cce.NonNullElements(typeParams));
-      Contract.Requires(cce.NonNullElements(newBoundVars));
+      Contract.Requires(Cce.NonNullElements(typeParams));
+      Contract.Requires(Cce.NonNullElements(newBoundVars));
       foreach (TypeVariable /*!*/ tvar in typeParams)
       {
         Contract.Assert(tvar != null);
@@ -559,11 +559,11 @@ namespace Microsoft.Boogie.TypeErasure
     {
       Contract.Requires(bindings != null);
       Contract.Requires(node != null);
-      Contract.Requires(cce.NonNullElements(newBoundVars));
+      Contract.Requires(Cce.NonNullElements(newBoundVars));
       Contract.Ensures(Contract.Result<VCExpr>() != null);
       List<VCTrigger /*!*/> /*!*/
         newTriggers = MutateTriggers(node.Triggers, bindings);
-      Contract.Assert(cce.NonNullElements(newTriggers));
+      Contract.Assert(Cce.NonNullElements(newTriggers));
       VCExpr /*!*/
         newBody = Mutate(node.Body, bindings);
       Contract.Assert(newBody != null);
@@ -608,7 +608,7 @@ namespace Microsoft.Boogie.TypeErasure
       VariableBindings bindings)
     {
       Contract.Requires(bindings != null);
-      Contract.Requires(cce.NonNullElements(oldArgs));
+      Contract.Requires(Cce.NonNullElements(oldArgs));
       Contract.Ensures(Contract.Result<VCExpr>() != null);
       // UGLY: the code for tracking polarities should be factored out
       int oldPolarity = Eraser.Polarity;
@@ -632,7 +632,7 @@ namespace Microsoft.Boogie.TypeErasure
       {
         Contract.Assert(arg != null);
         newArgs.Add(AxBuilder.Cast(Eraser.Mutate(arg, bindings),
-          cce.NonNull(newFun.InParams[i]).TypedIdent.Type));
+          Cce.NonNull(newFun.InParams[i]).TypedIdent.Type));
         i = i + 1;
       }
 
@@ -831,14 +831,14 @@ namespace Microsoft.Boogie.TypeErasure
       void ObjectInvariant()
       {
         Contract.Invariant(Op != null);
-        Contract.Invariant(cce.NonNullElements(Types));
+        Contract.Invariant(Cce.NonNullElements(Types));
       }
 
 
       public OpTypesPair(VCExprOp op, List<Type /*!*/> /*!*/ types)
       {
         Contract.Requires(op != null);
-        Contract.Requires(cce.NonNullElements(types));
+        Contract.Requires(Cce.NonNullElements(types));
         this.Op = op;
         this.Types = types;
         this.HashCode = HFNS.PolyHash(op.GetHashCode(), 17, types);
