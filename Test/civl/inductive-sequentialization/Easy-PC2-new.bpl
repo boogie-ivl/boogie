@@ -60,6 +60,9 @@ function {:inline} ParticipantIds(): Set Pid {
     Set((lambda {:pool "P1"} x: int :: 1 <= x && x <= NumParticipants))
 }
 
+function {:inline} IsValidParticipantPiece(x: ParticipantPiece): bool {
+    x->ids == ParticipantIds() && Set_Contains(x->ids, x->id)
+}
 
 yield invariant {:layer 1} YieldInit({:linear} pieces: Set ParticipantPiece, req: Request);
 invariant pieces == AllParticipantPieces(req->id);
@@ -125,6 +128,7 @@ requires call YieldInit(pieces, req);
 
 async action {:layer 1} voting(req: Request, {:linear_in} piece: One ParticipantPiece) //(reqid, pid) (4, 3) (5, 3)
 modifies locked_requests, participant_votes;
+asserts IsValidParticipantPiece(piece->val);
 asserts piece->val->val == req->id;
 // asserts !(exists req0:Request :: Set_Contains(locked_requests[pid], req0) && req0->id == req->id);
 // asserts participant_votes[pid][req] == NULL();
