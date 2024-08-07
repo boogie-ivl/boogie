@@ -84,17 +84,18 @@ requires call YieldInit(pieces, req);
    var {:linear} pieces': Set ParticipantPiece;
    var {:linear} piece: One ParticipantPiece;
    pieces' := pieces;
-   assume false;
    d := COMMIT();
    j := 1;
    while (j <= NumParticipants)
    invariant {:layer 1} 1 <= j && j <= NumParticipants + 1;
-//    invariant {:layer 1} pieces == JParticipantPieces(reqId'->val, j);
+   invariant {:layer 1} pieces == JParticipantPieces(req->id, j);
    {
     call piece := One_Get(pieces', (Fraction(req->id, j, ParticipantIds())));
+    assert {:layer 1} participant_votes[piece->val->id][piece->val->val] == NULL();
     async call voting0(req, piece);
     j := j + 1;
    }
+   assume false;
 
 //    call YieldBig();
    call YieldTrue();
@@ -129,6 +130,7 @@ requires call YieldInit(pieces, req);
 async action {:layer 1} voting(req: Request, {:linear_in} piece: One ParticipantPiece) //(reqid, pid) (4, 3) (5, 3)
 modifies locked_requests, participant_votes;
 asserts IsValidParticipantPiece(piece->val) && piece->val->val == req->id;
+asserts participant_votes[piece->val->id][piece->val->val] == NULL();
 // asserts !(exists req0:Request :: Set_Contains(locked_requests[pid], req0) && req0->id == req->id);
 // asserts participant_votes[pid][req] == NULL();
 {
@@ -139,7 +141,7 @@ asserts IsValidParticipantPiece(piece->val) && piece->val->val == req->id;
     //     return;
     // }
     // else {
-        
+        // assert participant_votes[piece->val->id][piece->val->val] == NULL();
         if (NoOverlap(locked_requests[piece->val->id], req->duration)) {
             locked_requests[piece->val->id] := Set_Add(locked_requests[piece->val->id], req);
             participant_votes[piece->val->id][req->id] := YES();
@@ -154,11 +156,12 @@ refines voting;
 
 yield procedure {:layer 1} voting0(req: Request, {:linear_in}  piece: One ParticipantPiece)
 requires {:layer 1} IsValidParticipantPiece(piece->val) && piece->val->val == req->id;
+// requires {:layer 1} old(participant_votes)[piece->val->id][piece->val->val] == NULL();
 // requires call YieldBig();
 // requires call YieldVoting(piece);
 {
     // assert {:layer 1} !(exists req0:Request :: Set_Contains((locked_requests)[pid], req0) && req0->id == req->id);
-    // assert {:layer 1} (participant_votes)[pid][req] == NULL();
+    assert {:layer 1} participant_votes[piece->val->id][piece->val->val] == NULL();
     call voting1(req, piece);
 }
 
