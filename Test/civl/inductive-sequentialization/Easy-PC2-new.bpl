@@ -105,9 +105,10 @@ requires call YieldBig();
     j := j + 1;
    }
    i := 1;
+
+   call YieldBig();
+
    while (i <= NumParticipants)
-   invariant {:yields} {:layer 1} true;
-   invariant call YieldBig();
    invariant {:layer 1} 1 <= i && i <= NumParticipants + 1;
    invariant {:layer 1} (d != ABORT()) ==> (forall k: Pid :: (1 <= k && k <= i-1)  ==> old(participant_votes)[k][req->id] == YES());
    {
