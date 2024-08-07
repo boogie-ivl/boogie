@@ -110,7 +110,7 @@ requires call YieldBig();
 
    while (i <= NumParticipants)
    invariant {:layer 1} 1 <= i && i <= NumParticipants + 1;
-   invariant {:layer 1} (d != ABORT()) ==> (forall k: Pid :: (1 <= k && k <= i-1)  ==> old(participant_votes)[k][req->id] == YES());
+   invariant {:layer 1} (d != ABORT()) ==> (forall k: Pid :: (1 <= k && k <= i-1)  ==> participant_votes[k][req->id] == YES());
    {
     call v := receive_vote(i, req->id);
     if (v == NO())
