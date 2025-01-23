@@ -252,9 +252,15 @@ namespace Microsoft.Boogie.SMTLib
             currentErrorHandler.OnModel(labels, model, result);
           }
 
+          // if the solver is out of resources or has timed out, the global result needs to reflect that.
+          if (result == SolverOutcome.OutOfResource || result == SolverOutcome.TimeOut) {
+            globalResult = result;
+          }
+
           Debug.Assert(errorsDiscovered > 0);
           // if errorLimit is 0, loop will break only if there are no more 
-          // counterexamples to be discovered.
+          // counterexamples to be discovered or the solver is out of resources
+          // or has timed out.
           if (labels == null || !labels.Any() || errorsDiscovered == errorLimit)
           {
             break;
