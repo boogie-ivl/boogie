@@ -1340,6 +1340,7 @@ namespace Microsoft.Boogie
               ps.CheckBooleanFlag("silent", x => Verbosity = CoreOptions.VerbosityLevel.Silent) ||
               ps.CheckBooleanFlag("traceTimes", x => TraceTimes = x) ||
               ps.CheckBooleanFlag("tracePOs", x => TraceProofObligations = x) ||
+              ps.CheckBooleanFlag("forceErrors", x => ForceBplErrors = x) ||
               ps.CheckBooleanFlag("noResolve", x => NoResolve = x) ||
               ps.CheckBooleanFlag("noTypecheck", x => NoTypecheck = x) ||
               ps.CheckBooleanFlag("overlookTypeErrors", x => OverlookBoogieTypeErrors = x) ||
@@ -1877,6 +1878,7 @@ namespace Microsoft.Boogie
   /traceTimes   output timing information at certain points in the pipeline
   /tracePOs     output information about the number of proof obligations
                 (also included in the /trace output)
+  /forceErrors  show boogie errors even if {:msg ...} attribute is present
   /break        launch and break into debugger
 
   ---- Civl options ----------------------------------------------------------
